@@ -1,1 +1,1 @@
-rootProject.name = "screenshoter"
+rootProject.name = "Code Screenshots"
