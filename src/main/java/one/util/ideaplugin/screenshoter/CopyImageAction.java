@@ -4,10 +4,11 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
@@ -29,7 +30,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * @author Tagir Valeev
  */
-public class CopyImageAction extends DumbAwareAction {
+public class CopyImageAction extends AnAction {
 
     static final long SIZE_LIMIT_TO_WARN = 3_000_000L;
     static final DateTimeFormatter DATE_TIME_PATTERN = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
@@ -124,4 +125,8 @@ public class CopyImageAction extends DumbAwareAction {
         presentation.setEnabled(CopyImagePlugin.getEditor(event) != null);
     }
 
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.EDT;
+    }
 }
