@@ -23,7 +23,7 @@ repositories {
 
 // Dependencies are managed with Gradle version catalog - read more: https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog
 dependencies {
-//    implementation(libs.annotations)
+    implementation("org.apache.xmlgraphics:batik-all:1.17")
 }
 
 // Set the JVM language level used to build the project.
