@@ -1,6 +1,8 @@
 plugins {
     id("java")
-    id("org.jetbrains.intellij") version "1.8.0"
+    id("org.jetbrains.kotlin.jvm") version "1.9.25"
+    id("org.jetbrains.intellij.platform") version "2.2.1"
+
 }
 
 group = "one.util.ideaplugin"
@@ -8,28 +10,32 @@ version = "1.8.1"
 
 repositories {
     mavenCentral()
+
+    intellijPlatform {
+        defaultRepositories()
+    }
 }
 
-// Configure Gradle IntelliJ Plugin
-// Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
-intellij {
-    version.set("2021.3.3")
-    type.set("IC") // Target IDE Platform
-
-    plugins.set(listOf(/* Plugin Dependencies */))
+dependencies{
+    implementation("org.apache.servicemix.bundles:org.apache.servicemix.bundles.batik:1.16_1")
+    intellijPlatform {
+        intellijIdeaCommunity("2024.1.7")
+    }
 }
-
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
-        sourceCompatibility = "11"
-        targetCompatibility = "11"
+        sourceCompatibility = "17"
+        targetCompatibility = "17"
+    }
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions.jvmTarget = "17"
     }
 
     patchPluginXml {
-        sinceBuild.set("213")
-        untilBuild.set("")
-    }
+        sinceBuild.set("241")
+        untilBuild.set("243.*")
+    }       
 
     signPlugin {
         certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
