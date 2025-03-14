@@ -1,4 +1,4 @@
-package one.util.ideaplugin.screenshoter;
+package one.tain.jbp.code.screenshoter;
 
 import com.intellij.ui.scale.JBUIScale;
 import org.apache.batik.dom.GenericDOMImplementation;
