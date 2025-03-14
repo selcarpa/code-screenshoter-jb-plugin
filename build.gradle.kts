@@ -5,7 +5,7 @@ plugins {
 
 }
 
-group = "one.util.ideaplugin"
+group = "one.tain.jbp.code-screenshoter"
 version = "1.8.1"
 
 repositories {
@@ -35,7 +35,7 @@ tasks {
     patchPluginXml {
         sinceBuild.set("241")
         untilBuild.set("243.*")
-    }       
+    }
 
     signPlugin {
         certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
