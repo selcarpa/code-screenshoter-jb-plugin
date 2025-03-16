@@ -1,1 +1,1 @@
-rootProject.name = "screenshoter"
+rootProject.name = "code-screenshoter-jb-plugin"
