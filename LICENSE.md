@@ -1,3 +1,4 @@
+Copyright 2025 selcarpa
 Copyright 2017, 2022 Tagir Valeev and contributors
 
 Licensed under the Apache License, Version 2.0 (the "License");

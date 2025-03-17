@@ -31,7 +31,7 @@
   <depends>com.intellij.modules.lang</depends>
 
   <actions>
-    <action id="one.util.ideaplugin.screenshoter.CopyImageAction" class="one.util.ideaplugin.screenshoter.CopyImageAction"
+    <action id="one.tain.jbp.code.screenshoter.CopyImageAction" class="one.tain.jbp.code.screenshoter.CopyImageAction"
             icon="/icons/capture.svg" text="Copy as Image" description="Copy the selection as image">
       <add-to-group group-id="EditMenu" anchor="last"/>
     </action>
@@ -42,8 +42,8 @@
 <!--    </action>-->
   </actions>
   <extensions defaultExtensionNs="com.intellij">
-    <projectService serviceImplementation="one.util.ideaplugin.screenshoter.CopyImageOptionsProvider"/>
-    <projectConfigurable groupId="editor" instance="one.util.ideaplugin.screenshoter.CopyImageConfigurable" id="screenshoter" displayName="Code Screenshots" />
+    <projectService serviceImplementation="one.tain.jbp.code.screenshoter.CopyImageOptionsProvider"/>
+    <projectConfigurable groupId="editor" instance="one.tain.jbp.code.screenshoter.CopyImageConfigurable" id="screenshoter" displayName="Code Screenshots" />
     <notificationGroup displayType="STICKY_BALLOON" id="Code Screenshots" isLogByDefault="false"/>
   </extensions>
 </idea-plugin>
