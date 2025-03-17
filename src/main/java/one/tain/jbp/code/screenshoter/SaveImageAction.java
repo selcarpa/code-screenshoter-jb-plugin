@@ -3,6 +3,7 @@ package one.tain.jbp.code.screenshoter;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -46,8 +47,8 @@ public class SaveImageAction extends AnAction {
         ImageBuilder imageBuilder = new ImageBuilder(editor);
         if (imageBuilder.getSelectedSize() > CopyImageAction.SIZE_LIMIT_TO_WARN) {
             if (Messages.showYesNoDialog(project,
-                "Saving such a big image could be slow and may take a lot of memory. Proceed?",
-                "Code Screenshots", "Yes, Save It!", "Cancel", null) != Messages.YES) {
+                    "Saving such a big image could be slow and may take a lot of memory. Proceed?",
+                    "Code Screenshots", "Yes, Save It!", "Cancel", null) != Messages.YES) {
                 return;
             }
         }
@@ -109,5 +110,10 @@ public class SaveImageAction extends AnAction {
     public void update(AnActionEvent event) {
         Presentation presentation = event.getPresentation();
         presentation.setEnabled(CopyImagePlugin.getEditor(event) != null);
+    }
+
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.EDT;
     }
 }
