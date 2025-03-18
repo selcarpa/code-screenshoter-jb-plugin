@@ -37,6 +37,10 @@ kotlin {
 intellijPlatform {
     pluginConfiguration {
         name = properties("pluginName")
+        ideaVersion {
+            sinceBuild = properties("pluginSinceBuild").get()
+            untilBuild = properties("pluginUntilBuild").get()
+        }
     }
 }
 

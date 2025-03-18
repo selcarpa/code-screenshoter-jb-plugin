@@ -1,16 +1,19 @@
-[![IntelliJ IDEA Plugin](https://img.shields.io/jetbrains/plugin/v/9406-code-screenshots?label=plugin&logo=intellij-idea)](https://plugins.jetbrains.com/plugin/9406-code-screenshots/)
-[![IntelliJ IDEA Plugin](https://img.shields.io/jetbrains/plugin/d/9406-code-screenshots?logo=intellij-idea)](https://plugins.jetbrains.com/plugin/9406-code-screenshots/)
+# code-screenshoter-jb-plugin
 
-The plugin is archived and not supported anymore.
+Simple IDEA plugin fork from [amaembo/screenshoter](https://github.com/amaembo/screenshoter).
 
-IDEA Code Screenshoter
-===
+It allows you to take sharp code screenshots.
 
-Simple IDEA plugin which allows you to take code screenshots. Just select code block and press `Ctrl+Alt+Shift+A` (`Option+Shift+Command+A`
-on macOS). Alternatively you may save screenshots as PNG files using **Save image as** action (no hot-key by default, but can be assigned via **Keymap**).
+Select code block and press `Ctrl+Alt+Shift+A` (`Option+Shift+Command+A`
+on macOS).
 
-Installation page is [here](https://plugins.jetbrains.com/idea/plugin/9406-code-screenshots).
+Installation page on [Jetbrains marketplace](https://plugins.jetbrains.com/idea/plugin/26843-code-screenshoter).
 
-### Example
-<h3 align=center><img src="screenshots/code_screenshot_1.png" width=600></h3>
-<h3 align=center><img src="screenshots/code_screenshot_2.png" width=600></h3>
+## Example
+
+
+![example1](screenshots/1.png)
+
+##   And then we zoom in 
+
+![example2](screenshots/2.png)
