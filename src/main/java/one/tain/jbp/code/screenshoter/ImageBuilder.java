@@ -2,12 +2,7 @@ package one.tain.jbp.code.screenshoter;
 
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.CaretModel;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.Inlay;
-import com.intellij.openapi.editor.SelectionModel;
-import com.intellij.openapi.editor.VisualPosition;
+import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
@@ -64,8 +59,8 @@ class ImageBuilder {
             newTransform.translate(-r.getX(), -r.getY());
 
             return format.paint(contentComponent, newTransform,
-                (int) (r.getWidth() * scale), (int) (r.getHeight() * scale),
-                getBackgroundColor(editor, false), options.myPadding);
+                    (int) (r.getWidth() * scale), (int) (r.getHeight() * scale),
+                    getBackgroundColor(editor, false), options.myPadding);
         } catch (IOException e) {
             Logger.getInstance(ImageBuilder.class).error(e);
             return null;
@@ -80,9 +75,9 @@ class ImageBuilder {
         editor.getSelectionModel().setSelection(0, 0);
         if (CopyImageOptionsProvider.getInstance(project).getState().myRemoveCaret) {
             editor.getCaretModel().moveToOffset(range.getStartOffset() == 0 ?
-                document.getLineEndOffset(document.getLineCount() - 1) : 0);
-            if (editor instanceof EditorEx) {
-                ((EditorEx) editor).setCaretEnabled(false);
+                    document.getLineEndOffset(document.getLineCount() - 1) : 0);
+            if (editor instanceof EditorEx editorEx) {
+                editorEx.setCaretEnabled(false);
             }
             editor.getSettings().setCaretRowShown(false);
         }
@@ -93,7 +88,7 @@ class ImageBuilder {
         Rectangle2D rectangle = getSelectionRectangle();
         double sizeX = rectangle.getWidth() + options.myPadding * 2;
         double sizeY = rectangle.getHeight() + options.myPadding * 2;
-        return (long)(sizeX * sizeY * options.myScale * options.myScale);
+        return (long) (sizeX * sizeY * options.myScale * options.myScale);
     }
 
     @NotNull
@@ -112,6 +107,14 @@ class ImageBuilder {
         return new TextRange(start, end);
     }
 
+    /**
+     * todo: Repeated calls to this method cause performance problems, consider reusing the results
+     *
+     * @param range
+     * @param text
+     * @param options
+     * @return
+     */
     @NotNull
     private Rectangle2D getSelectionRectangle(TextRange range, String text, CopyImageOptionsProvider.State options) {
         int start = range.getStartOffset();
@@ -120,7 +123,7 @@ class ImageBuilder {
 
         for (int i = start; i <= end; i++) {
             if (options.myChopIndentation &&
-                EMPTY_SUFFIX.matcher(text.substring(0, Math.min(i - start + 1, text.length()))).find()) {
+                    EMPTY_SUFFIX.matcher(text.substring(0, Math.min(i - start + 1, text.length()))).find()) {
                 continue;
             }
             VisualPosition pos = editor.offsetToVisualPosition(i);
@@ -169,10 +172,10 @@ class ImageBuilder {
             SelectionModel selectionModel = editor.getSelectionModel();
             CaretModel caretModel = editor.getCaretModel();
             CopyImageOptionsProvider provider =
-              CopyImageOptionsProvider.getInstance(Objects.requireNonNull(editor.getProject()));
+                    CopyImageOptionsProvider.getInstance(Objects.requireNonNull(editor.getProject()));
             if (provider.getState().myRemoveCaret) {
-                if (editor instanceof EditorEx) {
-                    ((EditorEx) editor).setCaretEnabled(true);
+                if (editor instanceof EditorEx editorEx) {
+                    editorEx.setCaretEnabled(false);
                 }
                 caretModel.moveToOffset(offset);
             }

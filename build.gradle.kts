@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin) // Kotlin support
     alias(libs.plugins.gradleIntelliJPlugin) // Gradle IntelliJ Plugin
     alias(libs.plugins.qodana) // Gradle Qodana Plugin
+    idea
 }
 
 group = properties("pluginGroup").get()
@@ -41,6 +42,12 @@ intellijPlatform {
             sinceBuild = properties("pluginSinceBuild").get()
             untilBuild = properties("pluginUntilBuild").get()
         }
+    }
+}
+idea {
+    module {
+        isDownloadJavadoc = false
+        isDownloadSources = true
     }
 }
 

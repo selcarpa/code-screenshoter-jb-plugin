@@ -8,7 +8,9 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
@@ -37,6 +39,7 @@ public class CopyImageAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {
+        long startTime = System.currentTimeMillis();
         Project project = event.getProject();
         if (project == null) return;
         Editor editor = CopyImagePlugin.getEditor(event);
@@ -66,8 +69,10 @@ public class CopyImageAction extends AnAction {
             NotificationGroupManager.getInstance().getNotificationGroup("Code Screenshots")
                 .createNotification("Image was copied to the clipboard", NotificationType.INFORMATION)
                 .setTitle("Code screenshots")
-                .addAction(NotificationAction.create("Save to File", anActionEvent -> saveImage(image, project)))
+                .addAction(DumbAwareAction.create("Save to File", anActionEvent -> saveImage(image, project)))
                 .notify(editor.getProject());
+            long endTime = System.currentTimeMillis();
+            Logger.getInstance(CopyImageAction.class).warn("Copied image in " + (endTime - startTime) + " ms");
         }
     }
 
