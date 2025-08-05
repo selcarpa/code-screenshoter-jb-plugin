@@ -60,7 +60,7 @@ public class SaveImageAction extends AnAction {
 
     private void saveImage(@NotNull TransferableImage<?> image, @NotNull Project project) {
         CopyImageOptionsProvider.State options = CopyImageOptionsProvider.getInstance(project).getState();
-        String toSave = options.myDirectoryToSave;
+        String toSave = options.getDirectoryToSave();
         if (StringUtil.isEmpty(toSave)) {
             toSave = SystemProperties.getUserHome();
         }

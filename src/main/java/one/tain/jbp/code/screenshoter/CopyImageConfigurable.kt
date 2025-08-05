@@ -1,137 +1,114 @@
-package one.tain.jbp.code.screenshoter;
+package one.tain.jbp.code.screenshoter
 
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.SearchableConfigurable;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.ui.SwingHelper;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
+import com.intellij.openapi.options.Configurable.NoScroll
+import com.intellij.openapi.options.SearchableConfigurable
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.ui.TextFieldWithHistoryWithBrowseButton
+import com.intellij.util.NotNullProducer
+import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.ui.SwingHelper
+import org.jetbrains.annotations.Nls
+import javax.swing.*
+import javax.swing.event.ChangeEvent
 
-import javax.swing.*;
-import java.util.Arrays;
+private const val SLIDER_SCALE = 2.0
 
 /**
  * @author Tagir Valeev
  */
-public class CopyImageConfigurable implements SearchableConfigurable, Configurable.NoScroll {
-    private CopyImageOptionsPanel myPanel;
-    private final Project myProject;
+class CopyImageConfigurable(private val myProject: Project) : SearchableConfigurable, NoScroll {
+    private lateinit var myPanel: CopyImageOptionsPanel
 
-    public CopyImageConfigurable(Project project) {
-        this.myProject = project;
+    override fun getDisplayName(): @Nls String {
+        return "Copy code as image"
     }
 
-    @Nls
-    @Override
-    public String getDisplayName() {
-        return "Copy code as image";
+    override fun getId(): String {
+        return "screenshoter"
     }
 
-    @NotNull
-    @Override
-    public String getId() {
-        return "screenshoter";
+    override fun getHelpTopic(): String? {
+        return null
     }
 
-    @Nullable
-    @Override
-    public String getHelpTopic() {
-        return null;
+    override fun createComponent(): JComponent {
+        myPanel = CopyImageOptionsPanel()
+        myPanel.init()
+        return myPanel.wholePanel
     }
 
-    @Nullable
-    @Override
-    public JComponent createComponent() {
-        myPanel = new CopyImageOptionsPanel();
-        myPanel.init();
-        return myPanel.wholePanel;
+    override fun isModified(): Boolean {
+        val provider = myProject.getService(CopyImageOptionsProvider::class.java)
+        return provider.state != myPanel.toState()
     }
 
-    @Override
-    public boolean isModified() {
-        CopyImageOptionsProvider provider = myProject.getService(CopyImageOptionsProvider.class);
-        return !provider.getState().equals(myPanel.toState());
+    override fun apply() {
+        val provider = myProject.getService(CopyImageOptionsProvider::class.java)
+        provider.loadState(myPanel.toState())
     }
 
-    @Override
-    public void apply() {
-        CopyImageOptionsProvider provider = myProject.getService(CopyImageOptionsProvider.class);
-        provider.loadState(myPanel.toState());
+    override fun reset() {
+        val provider = myProject.getService(CopyImageOptionsProvider::class.java)
+        myPanel.fromState(provider.state)
     }
 
-    @Override
-    public void reset() {
-        CopyImageOptionsProvider provider = myProject.getService(CopyImageOptionsProvider.class);
-        myPanel.fromState(provider.getState());
+    override fun disposeUIResources() {
     }
 
-    @Override
-    public void disposeUIResources() {
-        myPanel = null;
-    }
+    inner class CopyImageOptionsPanel {
+        private lateinit var scale: JTextField
+        private lateinit var chopIndentation: JCheckBox
+        private lateinit var removeCaret: JCheckBox
+        lateinit var wholePanel: JPanel
+        private lateinit var slider: JSlider
+        private lateinit var saveDirectoryPanel: JPanel
+        private lateinit var padding: JTextField
+        private lateinit var saveDirectory: TextFieldWithHistoryWithBrowseButton
+        private lateinit var format: JComboBox<TransferableImage.Format>
 
-    public class CopyImageOptionsPanel {
-        private static final double SLIDER_SCALE = 2.0;
+        fun toState(): CopyImageOptionsProvider.State {
+            return CopyImageOptionsProvider.State(
+                scale = scale.text.trim().toDoubleOrNull() ?: 4.0,
+                padding = padding.text.trim().toIntOrNull() ?: 0,
+                chopIndentation = chopIndentation.isSelected,
+                removeCaret = removeCaret.isSelected,
+                directoryToSave = saveDirectory.text,
+                format = format.selectedItem?.let {
+                    it as TransferableImage.Format?
+                } ?: TransferableImage.Format.PNG)
+        }
 
-        private JTextField scale;
-        private JCheckBox chopIndentation;
-        private JCheckBox removeCaret;
-        private JPanel wholePanel;
-        private JSlider slider;
-        private JPanel saveDirectoryPanel;
-        private JTextField padding;
-        private TextFieldWithHistoryWithBrowseButton saveDirectory;
-        private JComboBox<TransferableImage.Format> format;
+        fun fromState(state: CopyImageOptionsProvider.State) {
+            chopIndentation.isSelected = state.chopIndentation
+            removeCaret.isSelected = state.removeCaret
+            slider.value = (state.scale * SLIDER_SCALE).toInt()
+            saveDirectory.text = StringUtil.notNullize(state.directoryToSave)
+            padding.text = state.padding.toString()
+            format.selectedIndex = state.format.ordinal
+        }
 
-        CopyImageOptionsProvider.State toState() {
-            CopyImageOptionsProvider.State state = new CopyImageOptionsProvider.State();
-            state.myChopIndentation = chopIndentation.isSelected();
-            state.myRemoveCaret = removeCaret.isSelected();
-            try {
-                state.myScale = Double.parseDouble(scale.getText().trim());
-            } catch (NumberFormatException ignored) {
+        fun init() {
+            slider.addChangeListener { _: ChangeEvent ->
+                scale.text = (slider.value / SLIDER_SCALE).toString()
             }
 
-            state.myDirectoryToSave = StringUtil.nullize(saveDirectory.getText());
-            try {
-                state.myPadding = Integer.parseInt(padding.getText().trim());
-            } catch (NumberFormatException ignored) {
+            TransferableImage.Format.entries.forEach { item ->
+                format.addItem(item)
             }
-
-            state.myFormat = (TransferableImage.Format) format.getSelectedItem();
-
-            return state;
         }
 
-        void fromState(CopyImageOptionsProvider.State state) {
-            chopIndentation.setSelected(state.myChopIndentation);
-            removeCaret.setSelected(state.myRemoveCaret);
-            slider.setValue((int) (state.myScale * SLIDER_SCALE));
-            saveDirectory.setText(StringUtil.notNullize(state.myDirectoryToSave));
-            padding.setText(String.valueOf(state.myPadding));
-            format.setSelectedIndex(state.myFormat == null ? 0 : state.myFormat.ordinal());
-        }
-
-        void init() {
-            slider.addChangeListener(e -> scale.setText(String.valueOf(slider.getValue() / SLIDER_SCALE)));
-            Arrays.stream(TransferableImage.Format.values()).forEach(format::addItem);
-        }
-
-        private void createUIComponents() {
-            FileChooserDescriptor singleFolderDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-            TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
-                    myProject,
-                    "Save to Directory",
-                    singleFolderDescriptor,
-                    ContainerUtil::emptyList);
-            saveDirectoryPanel = field;
-            saveDirectory = field;
+        private fun createUIComponents() {
+            val singleFolderDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
+            val field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
+                myProject,
+                "Save to Directory",
+                singleFolderDescriptor,
+                NotNullProducer { ContainerUtil.emptyList<String>() }
+            )
+            saveDirectoryPanel = field
+            saveDirectory = field
         }
     }
 }

@@ -75,7 +75,7 @@ class CopyImageAction : AnAction() {
 
     private fun saveImage(image: TransferableImage<*>, project: Project) {
         val options = CopyImageOptionsProvider.getInstance(project).state
-        val toSave = options.myDirectoryToSave?.takeIf { it.isNotBlank() } ?: SystemProperties.getUserHome()
+        val toSave = options.directoryToSave?.takeIf { it.isNotBlank() } ?: SystemProperties.getUserHome()
         val now = LocalDateTime.now()
         val date = DATE_TIME_PATTERN.format(now)
         val fileName = "Shot_$date.${image.format.ext}"

@@ -43,13 +43,13 @@ class ImageBuilder {
         try {
             resetEditor();
             CopyImageOptionsProvider.State options = CopyImageOptionsProvider.getInstance(project).getState();
-            double scale = options.myScale;
+            double scale = options.getScale();
             JComponent contentComponent = editor.getContentComponent();
             Graphics2D contentGraphics = (Graphics2D) contentComponent.getGraphics();
             AffineTransform currentTransform = contentGraphics.getTransform();
             AffineTransform newTransform = new AffineTransform(currentTransform);
             newTransform.scale(scale, scale);
-            TransferableImage.Format format = options.myFormat;
+            TransferableImage.Format format = options.getFormat();
             if (format == null) format = TransferableImage.Format.PNG;
             // To flush glyph cache
             format.paint(contentComponent, newTransform, 1, 1, JBColor.BLACK, 0);
@@ -60,7 +60,7 @@ class ImageBuilder {
 
             return format.paint(contentComponent, newTransform,
                     (int) (r.getWidth() * scale), (int) (r.getHeight() * scale),
-                    getBackgroundColor(editor, false), options.myPadding);
+                    getBackgroundColor(editor, false), options.getPadding());
         } catch (IOException e) {
             Logger.getInstance(ImageBuilder.class).error(e);
             return null;
@@ -73,7 +73,7 @@ class ImageBuilder {
         Document document = editor.getDocument();
         TextRange range = getRange(editor);
         editor.getSelectionModel().removeSelection();
-        if (CopyImageOptionsProvider.getInstance(project).getState().myRemoveCaret) {
+        if (CopyImageOptionsProvider.getInstance(project).getState().getRemoveCaret()) {
             editor.getCaretModel().moveToOffset(range.getStartOffset() == 0 ?
                     document.getLineEndOffset(document.getLineCount() - 1) : 0);
             if (editor instanceof EditorEx editorEx) {
@@ -86,9 +86,9 @@ class ImageBuilder {
     long getSelectedSize() {
         CopyImageOptionsProvider.State options = CopyImageOptionsProvider.getInstance(project).getState();
         Rectangle2D rectangle = getSelectionRectangle();
-        double sizeX = rectangle.getWidth() + options.myPadding * 2;
-        double sizeY = rectangle.getHeight() + options.myPadding * 2;
-        return (long) (sizeX * sizeY * options.myScale * options.myScale);
+        double sizeX = rectangle.getWidth() + options.getPadding() * 2;
+        double sizeY = rectangle.getHeight() + options.getPadding() * 2;
+        return (long) (sizeX * sizeY * options.getScale() * options.getScale());
     }
 
     @NotNull
@@ -122,7 +122,7 @@ class ImageBuilder {
         Rectangle2D r = new Rectangle2D.Double();
 
         for (int i = start; i <= end; i++) {
-            if (options.myChopIndentation &&
+            if (options.getChopIndentation() &&
                     EMPTY_SUFFIX.matcher(text.substring(0, Math.min(i - start + 1, text.length()))).find()) {
                 continue;
             }
@@ -173,7 +173,7 @@ class ImageBuilder {
             CaretModel caretModel = editor.getCaretModel();
             CopyImageOptionsProvider provider =
                     CopyImageOptionsProvider.getInstance(Objects.requireNonNull(editor.getProject()));
-            if (provider.getState().myRemoveCaret) {
+            if (provider.getState().getRemoveCaret()) {
                 if (editor instanceof EditorEx editorEx) {
                     editorEx.setCaretEnabled(false);
                 }
