@@ -50,7 +50,7 @@ public class CopyImageConfigurable implements SearchableConfigurable, Configurab
     public JComponent createComponent() {
         myPanel = new CopyImageOptionsPanel();
         myPanel.init();
-        return myPanel.myWholePanel;
+        return myPanel.wholePanel;
     }
 
     @Override
@@ -79,48 +79,48 @@ public class CopyImageConfigurable implements SearchableConfigurable, Configurab
     public class CopyImageOptionsPanel {
         private static final double SLIDER_SCALE = 2.0;
 
-        private JTextField myScale;
-        private JCheckBox myChopIndentation;
-        private JCheckBox myRemoveCaret;
-        private JPanel myWholePanel;
-        private JSlider mySlider;
-        private JPanel mySaveDirectoryPanel;
-        private JTextField myPadding;
-        private TextFieldWithHistoryWithBrowseButton mySaveDirectory;
-        private JComboBox<TransferableImage.Format> myFormat;
+        private JTextField scale;
+        private JCheckBox chopIndentation;
+        private JCheckBox removeCaret;
+        private JPanel wholePanel;
+        private JSlider slider;
+        private JPanel saveDirectoryPanel;
+        private JTextField padding;
+        private TextFieldWithHistoryWithBrowseButton saveDirectory;
+        private JComboBox<TransferableImage.Format> format;
 
         CopyImageOptionsProvider.State toState() {
             CopyImageOptionsProvider.State state = new CopyImageOptionsProvider.State();
-            state.myChopIndentation = myChopIndentation.isSelected();
-            state.myRemoveCaret = myRemoveCaret.isSelected();
+            state.myChopIndentation = chopIndentation.isSelected();
+            state.myRemoveCaret = removeCaret.isSelected();
             try {
-                state.myScale = Double.parseDouble(myScale.getText().trim());
+                state.myScale = Double.parseDouble(scale.getText().trim());
             } catch (NumberFormatException ignored) {
             }
 
-            state.myDirectoryToSave = StringUtil.nullize(mySaveDirectory.getText());
+            state.myDirectoryToSave = StringUtil.nullize(saveDirectory.getText());
             try {
-                state.myPadding = Integer.parseInt(myPadding.getText().trim());
+                state.myPadding = Integer.parseInt(padding.getText().trim());
             } catch (NumberFormatException ignored) {
             }
 
-            state.myFormat = (TransferableImage.Format) myFormat.getSelectedItem();
+            state.myFormat = (TransferableImage.Format) format.getSelectedItem();
 
             return state;
         }
 
         void fromState(CopyImageOptionsProvider.State state) {
-            myChopIndentation.setSelected(state.myChopIndentation);
-            myRemoveCaret.setSelected(state.myRemoveCaret);
-            mySlider.setValue((int) (state.myScale * SLIDER_SCALE));
-            mySaveDirectory.setText(StringUtil.notNullize(state.myDirectoryToSave));
-            myPadding.setText(String.valueOf(state.myPadding));
-            myFormat.setSelectedIndex(state.myFormat == null ? 0 : state.myFormat.ordinal());
+            chopIndentation.setSelected(state.myChopIndentation);
+            removeCaret.setSelected(state.myRemoveCaret);
+            slider.setValue((int) (state.myScale * SLIDER_SCALE));
+            saveDirectory.setText(StringUtil.notNullize(state.myDirectoryToSave));
+            padding.setText(String.valueOf(state.myPadding));
+            format.setSelectedIndex(state.myFormat == null ? 0 : state.myFormat.ordinal());
         }
 
         void init() {
-            mySlider.addChangeListener(e -> myScale.setText(String.valueOf(mySlider.getValue() / SLIDER_SCALE)));
-            Arrays.stream(TransferableImage.Format.values()).forEach(myFormat::addItem);
+            slider.addChangeListener(e -> scale.setText(String.valueOf(slider.getValue() / SLIDER_SCALE)));
+            Arrays.stream(TransferableImage.Format.values()).forEach(format::addItem);
         }
 
         private void createUIComponents() {
@@ -130,8 +130,8 @@ public class CopyImageConfigurable implements SearchableConfigurable, Configurab
                     "Save to Directory",
                     singleFolderDescriptor,
                     ContainerUtil::emptyList);
-            mySaveDirectoryPanel = field;
-            mySaveDirectory = field;
+            saveDirectoryPanel = field;
+            saveDirectory = field;
         }
     }
 }
