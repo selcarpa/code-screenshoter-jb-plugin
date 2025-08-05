@@ -77,7 +77,7 @@ public class CopyImageConfigurable implements SearchableConfigurable, Configurab
     }
 
     public class CopyImageOptionsPanel {
-        private static final double SLIDER_SCALE = 2;
+        private static final double SLIDER_SCALE = 2.0;
 
         private JTextField myScale;
         private JCheckBox myChopIndentation;
@@ -100,11 +100,11 @@ public class CopyImageConfigurable implements SearchableConfigurable, Configurab
 
             state.myDirectoryToSave = StringUtil.nullize(mySaveDirectory.getText());
             try {
-                state.myPadding = Integer.parseInt(myPadding.getText());
+                state.myPadding = Integer.parseInt(myPadding.getText().trim());
             } catch (NumberFormatException ignored) {
             }
 
-            state.myFormat = TransferableImage.Format.values()[myFormat.getSelectedIndex()];
+            state.myFormat = (TransferableImage.Format) myFormat.getSelectedItem();
 
             return state;
         }
@@ -120,13 +120,14 @@ public class CopyImageConfigurable implements SearchableConfigurable, Configurab
 
         void init() {
             mySlider.addChangeListener(e -> myScale.setText(String.valueOf(mySlider.getValue() / SLIDER_SCALE)));
-            Arrays.asList(TransferableImage.Format.values()).forEach(myFormat::addItem);
+            Arrays.stream(TransferableImage.Format.values()).forEach(myFormat::addItem);
         }
 
         private void createUIComponents() {
             FileChooserDescriptor singleFolderDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-            TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(myProject,
-                "Save to Directory",
+            TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
+                    myProject,
+                    "Save to Directory",
                     singleFolderDescriptor,
                     ContainerUtil::emptyList);
             mySaveDirectoryPanel = field;

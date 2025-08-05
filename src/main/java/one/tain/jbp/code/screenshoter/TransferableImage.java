@@ -27,6 +27,7 @@ public abstract class TransferableImage<T> implements Transferable {
 
     public enum Format {
         PNG("png", DataFlavor.imageFlavor) {
+            @Override
             TransferableImage<?> paint(JComponent contentComponent, AffineTransform at,
                                        int width, int height, Color backgroundColor, int padding) {
                 double scale = JBUIScale.sysScale(contentComponent);
@@ -39,6 +40,7 @@ public abstract class TransferableImage<T> implements Transferable {
             }
         },
         SVG("svg", svgDataFlavor(), DataFlavor.stringFlavor, DataFlavor.plainTextFlavor) {
+            @Override
             TransferableImage<?> paint(JComponent contentComponent, AffineTransform at,
                                        int width, int height, Color backgroundColor, int padding) throws IOException {
                 DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
@@ -98,6 +100,7 @@ public abstract class TransferableImage<T> implements Transferable {
     }
 
     @NotNull
+    @Override
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
         if (isDataFlavorSupported(flavor)) {
             return transferee;
@@ -105,10 +108,12 @@ public abstract class TransferableImage<T> implements Transferable {
         throw new UnsupportedFlavorException(flavor);
     }
 
+    @Override
     public DataFlavor[] getTransferDataFlavors() {
         return format.flavors.clone();
     }
 
+    @Override
     public boolean isDataFlavorSupported(DataFlavor flavor) {
         return Arrays.stream(format.flavors).anyMatch(flavor::equals);
     }

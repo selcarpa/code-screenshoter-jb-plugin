@@ -34,13 +34,13 @@ public class SaveImageAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent event) {
         Project project = event.getProject();
         if (project == null) return;
-        Editor editor = CopyImagePlugin.getEditor(event);
+        Editor editor = CopyImageUtils.getEditor(event);
         if (editor == null) {
-            CopyImagePlugin.showError(project, "'Save as Image' is available in text editors only");
+            CopyImageUtils.showError(project, "'Save as Image' is available in text editors only");
             return;
         }
         if (!editor.getSelectionModel().hasSelection()) {
-            CopyImagePlugin.showError(project, "Please select the text fragment to save");
+            CopyImageUtils.showError(project, "Please select the text fragment to save");
             return;
         }
 
@@ -77,18 +77,18 @@ public class SaveImageAction extends AnAction {
             }
 
             String pathRepresentation = StringUtil.escapeXmlEntities(StringUtil.shortenPathWithEllipsis(path.toString(), 50));
-            Notification notification = CopyImagePlugin.getNotificationGroup()
+            Notification notification = CopyImageUtils.getNotificationGroup()
                     .createNotification(pathRepresentation, NotificationType.INFORMATION)
                     .setTitle("Code screenshots")
                     .setSubtitle("Image was saved:");
-            if (Desktop.isDesktopSupported()) {
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
                 notification.addAction(new NotificationAction("Open") {
                     @Override
                     public void actionPerformed(@NotNull AnActionEvent anActionEvent, @NotNull Notification notification) {
                         try {
                             Desktop.getDesktop().open(path.toFile());
                         } catch (IOException e) {
-                            CopyImagePlugin.showError(project, "Cannot open image:  " + StringUtil.escapeXmlEntities(
+                            CopyImageUtils.showError(project, "Cannot open image:  " + StringUtil.escapeXmlEntities(
                                     path.toString()) + ":<br>" + StringUtil.escapeXmlEntities(
                                     StringUtil.notNullize(e.getLocalizedMessage())));
                         }
@@ -97,10 +97,10 @@ public class SaveImageAction extends AnAction {
             }
             notification.notify(project);
         } catch (FileAlreadyExistsException e) {
-            CopyImagePlugin.showError(project, "Cannot save image:  " + StringUtil.escapeXmlEntities(
+            CopyImageUtils.showError(project, "Cannot save image:  " + StringUtil.escapeXmlEntities(
                     path.toString()) + ":<br>Not a directory: " + StringUtil.escapeXmlEntities(e.getFile()));
         } catch (IOException e) {
-            CopyImagePlugin.showError(project, "Cannot save image:  " + StringUtil.escapeXmlEntities(
+            CopyImageUtils.showError(project, "Cannot save image:  " + StringUtil.escapeXmlEntities(
                     path.toString()) + ":<br>" + StringUtil.escapeXmlEntities(
                     StringUtil.notNullize(e.getLocalizedMessage())));
         }
@@ -109,7 +109,7 @@ public class SaveImageAction extends AnAction {
     @Override
     public void update(AnActionEvent event) {
         Presentation presentation = event.getPresentation();
-        presentation.setEnabled(CopyImagePlugin.getEditor(event) != null);
+        presentation.setEnabled(CopyImageUtils.getEditor(event) != null);
     }
 
     @Override

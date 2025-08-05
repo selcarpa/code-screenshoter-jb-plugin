@@ -72,7 +72,7 @@ class ImageBuilder {
     private void resetEditor() {
         Document document = editor.getDocument();
         TextRange range = getRange(editor);
-        editor.getSelectionModel().setSelection(0, 0);
+        editor.getSelectionModel().removeSelection();
         if (CopyImageOptionsProvider.getInstance(project).getState().myRemoveCaret) {
             editor.getCaretModel().moveToOffset(range.getStartOffset() == 0 ?
                     document.getLineEndOffset(document.getLineCount() - 1) : 0);
@@ -110,10 +110,10 @@ class ImageBuilder {
     /**
      * todo: Repeated calls to this method cause performance problems, consider reusing the results
      *
-     * @param range
-     * @param text
-     * @param options
-     * @return
+     * @param range   the text range
+     * @param text    the text content
+     * @param options the copy image options
+     * @return the selection rectangle
      */
     @NotNull
     private Rectangle2D getSelectionRectangle(TextRange range, String text, CopyImageOptionsProvider.State options) {
