@@ -1,12 +1,14 @@
 package one.tain.jbp.code.screenshoter
 
 import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.project.Project
 import java.util.*
 
+@Service(Service.Level.PROJECT)
 @State(name = "CopyImageOptionsProvider", storages = [Storage(StoragePathMacros.WORKSPACE_FILE)])
 class CopyImageOptionsProvider : PersistentStateComponent<CopyImageOptionsProvider.State> {
     private val myState = State()

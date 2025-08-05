@@ -1,16 +1,16 @@
 <idea-plugin>
-  <id>one.tain.jbp.code-screenshoter</id>
-  <name>Code Screenshots</name>
-  <vendor email="selcarpa@gmail.com" url="https://github.com/selcarpa/screenshoter/">selcarpa</vendor>
+    <id>one.tain.jbp.code-screenshoter</id>
+    <name>Code Screenshots</name>
+    <vendor email="selcarpa@gmail.com" url="https://github.com/selcarpa/screenshoter/">selcarpa</vendor>
 
-  <description><![CDATA[
+    <description><![CDATA[
       <p>Simple IDEA plugin fork from <a href="https://github.com/amaembo/screenshoter">amaembo/screenshoter</a>.</p>
       <p>It allows you to take sharp code screenshots.</p>
       <p>Select code block and press <code>Ctrl+Alt+Shift+A</code> (<code>Option+Shift+Command+A</code>
       on macOS).</p>
     ]]></description>
 
-  <change-notes><![CDATA[
+    <change-notes><![CDATA[
       <ul>
         <li>Version 2.0.2: Update 2025.2 Compatible</li>
         <li>Version 2.0.1: Modify some description</li>
@@ -27,25 +27,26 @@
         <li>Version 1.1: options page added (Editor|Copy image options); minor fixes.</li>
       </ul>
     ]]>
-  </change-notes>
+    </change-notes>
 
-  <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.lang</depends>
 
-  <actions>
-    <action id="one.tain.jbp.code.screenshoter.CopyImageAction" class="one.tain.jbp.code.screenshoter.CopyImageAction"
-            icon="/icons/capture.svg" text="Copy as Image" description="Copy the selection as image">
-      <add-to-group group-id="EditMenu" anchor="last"/>
-      <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt A"/>
-    </action>
-<!--    <action id="one.tain.jbp.code.screenshoter.SaveImageAction"-->
-<!--            class="one.tain.jbp.code.screenshoter.SaveImageAction"-->
-<!--            text="Save as Image" description="Save the selection as image">-->
-<!--      <add-to-group group-id="EditMenu" anchor="last"/>-->
-<!--    </action>-->
-  </actions>
-  <extensions defaultExtensionNs="com.intellij">
-    <projectService serviceImplementation="one.tain.jbp.code.screenshoter.CopyImageOptionsProvider"/>
-    <projectConfigurable groupId="editor" instance="one.tain.jbp.code.screenshoter.CopyImageConfigurable" id="screenshoter" displayName="Code Screenshots" />
-    <notificationGroup displayType="STICKY_BALLOON" id="Code Screenshots" isLogByDefault="false"/>
-  </extensions>
+    <actions>
+        <action id="one.tain.jbp.code.screenshoter.CopyImageAction"
+                class="one.tain.jbp.code.screenshoter.CopyImageAction"
+                icon="/icons/capture.svg" text="Copy as Image" description="Copy the selection as image">
+            <add-to-group group-id="EditMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt A"/>
+        </action>
+        <!--    <action id="one.tain.jbp.code.screenshoter.SaveImageAction"-->
+        <!--            class="one.tain.jbp.code.screenshoter.SaveImageAction"-->
+        <!--            text="Save as Image" description="Save the selection as image">-->
+        <!--      <add-to-group group-id="EditMenu" anchor="last"/>-->
+        <!--    </action>-->
+    </actions>
+    <extensions defaultExtensionNs="com.intellij">
+        <projectConfigurable groupId="editor" instance="one.tain.jbp.code.screenshoter.CopyImageConfigurable"
+                             id="screenshoter" displayName="Code Screenshots"/>
+        <notificationGroup displayType="STICKY_BALLOON" id="Code Screenshots" isLogByDefault="false"/>
+    </extensions>
 </idea-plugin>
