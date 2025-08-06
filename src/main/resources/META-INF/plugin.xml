@@ -4,10 +4,9 @@
     <vendor email="selcarpa@gmail.com" url="https://github.com/selcarpa/screenshoter/">selcarpa</vendor>
 
     <description><![CDATA[
-      <p>Simple IDEA plugin fork from <a href="https://github.com/amaembo/screenshoter">amaembo/screenshoter</a>.</p>
-      <p>It allows you to take sharp code screenshots.</p>
-      <p>Select code block and press <code>Ctrl+Alt+Shift+A</code> (<code>Option+Shift+Command+A</code>
-      on macOS).</p>
+      <p><b><a href="https://github.com/selcarpa/screenshoter">Code Screenshots</a></b></p>
+      <p>A simple and powerful IDEA plugin forked from <a href="https://github.com/amaembo/screenshoter">amaembo/screenshoter</a>, designed to help you capture sharp, high-quality code screenshots directly from your editor.</p>
+      <p>To use, simply select a block of code and press <code>Ctrl+Alt+Shift+A</code> (or <code>Option+Shift+Command+A</code> on macOS).</p>
     ]]></description>
 
     <change-notes><![CDATA[

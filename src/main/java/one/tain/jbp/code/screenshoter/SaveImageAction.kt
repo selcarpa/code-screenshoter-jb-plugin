@@ -36,7 +36,8 @@ class SaveImageAction : AnAction() {
         }
 
         val imageBuilder = ImageBuilder(editor)
-        if (imageBuilder.selectedSize > SIZE_LIMIT_TO_WARN) {
+        val (size, rectangle) = imageBuilder.selectedSize()
+        if (size > SIZE_LIMIT_TO_WARN) {
             if (Messages.showYesNoDialog(
                     project,
                     "Saving such a big image could be slow and may take a lot of memory. Proceed?",
@@ -46,7 +47,7 @@ class SaveImageAction : AnAction() {
                 return
             }
         }
-        val image = imageBuilder.createImage()
+        val image = imageBuilder.createImage(rectangle)
         if (image != null) {
             saveImage(image, project)
         }

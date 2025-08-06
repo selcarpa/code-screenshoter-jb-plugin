@@ -5,7 +5,6 @@ plugins {
     id("java") // Java support
     alias(libs.plugins.kotlin) // Kotlin support
     alias(libs.plugins.gradleIntelliJPlugin) // Gradle IntelliJ Plugin
-    alias(libs.plugins.qodana) // Gradle Qodana Plugin
     idea
 }
 
@@ -24,23 +23,48 @@ repositories {
 dependencies {
     implementation("org.apache.xmlgraphics:batik-dom:1.17")
     implementation("org.apache.xmlgraphics:batik-svggen:1.17")
+    // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
-        create(properties("platformType"), properties("platformVersion"))
+        create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
+
+        // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
         plugins(providers.gradleProperty("platformPlugins").map { it.split(',') })
     }
 }
 
 // Set the JVM language level used to build the project.
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
+// Configure IntelliJ Platform Gradle Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-extension.html
 intellijPlatform {
     pluginConfiguration {
-        name = properties("pluginName")
+        name = providers.gradleProperty("pluginName")
+        version = providers.gradleProperty("pluginVersion")
+
         ideaVersion {
-            sinceBuild = properties("pluginSinceBuild").get()
-            untilBuild = properties("pluginUntilBuild").get()
+            sinceBuild = providers.gradleProperty("pluginSinceBuild")
+        }
+    }
+
+    signing {
+        certificateChain = providers.environmentVariable("CERTIFICATE_CHAIN")
+        privateKey = providers.environmentVariable("PRIVATE_KEY")
+        password = providers.environmentVariable("PRIVATE_KEY_PASSWORD")
+    }
+
+    publishing {
+        token = providers.environmentVariable("PUBLISH_TOKEN")
+        // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
+        // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
+        // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel
+        channels = providers.gradleProperty("pluginVersion").map { listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" }) }
+    }
+
+    pluginVerification {
+        ides {
+            recommended()
         }
     }
 }

@@ -1,11 +1,9 @@
 [versions]
 
 # plugins
-kotlin = "2.1.10"
-gradleIntelliJPlugin = "2.3.0"
-qodana = "2023.3.1"
+kotlin = "2.2.0"
+gradleIntelliJPlugin = "2.7.0"
 
 [plugins]
 gradleIntelliJPlugin = { id = "org.jetbrains.intellij.platform", version.ref = "gradleIntelliJPlugin" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-qodana = { id = "org.jetbrains.qodana", version.ref = "qodana" }

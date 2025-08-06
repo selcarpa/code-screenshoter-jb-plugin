@@ -22,10 +22,8 @@ import kotlin.math.min
 internal class ImageBuilder(private val editor: Editor) {
     private val project: Project = Objects.requireNonNull<Project>(editor.project)
 
-    fun createImage(): TransferableImage<*>? {
-        val range: TextRange = getRange(editor)
+    fun createImage(r:Rectangle2D): TransferableImage<*>? {
 
-        val document = editor.document
         val state: EditorState = EditorState.from(editor)
         try {
             resetEditor()
@@ -39,8 +37,6 @@ internal class ImageBuilder(private val editor: Editor) {
             val format: TransferableImage.Format = options.format
             // To flush glyph cache
             format.paint(contentComponent, newTransform, 1, 1, JBColor.BLACK, 0)
-            val text = document.getText(range)
-            val r = getSelectionRectangle(range, text, options)
 
             newTransform.translate(-r.x, -r.y)
 
@@ -71,14 +67,13 @@ internal class ImageBuilder(private val editor: Editor) {
         }
     }
 
-    val selectedSize: Long
-        get() {
+    fun  selectedSize(): Pair<Long,Rectangle2D>{
             val options =
                 getInstance(project).state
             val rectangle = this.selectionRectangle
             val sizeX = rectangle.width + options.padding * 2
             val sizeY = rectangle.height + options.padding * 2
-            return (sizeX * sizeY * options.scale * options.scale).toLong()
+            return (sizeX * sizeY * options.scale * options.scale).toLong() to rectangle
         }
 
     private val selectionRectangle: Rectangle2D
@@ -93,7 +88,6 @@ internal class ImageBuilder(private val editor: Editor) {
         }
 
     /**
-     * todo: Repeated calls to this method cause performance problems, consider reusing the results
      *
      *
      * Calculates the bounding rectangle for the selected text range in the editor.

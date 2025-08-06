@@ -44,7 +44,8 @@ class CopyImageAction : AnAction() {
         }
 
         val imageBuilder = ImageBuilder(editor)
-        if (imageBuilder.selectedSize > SIZE_LIMIT_TO_WARN) {
+        val (size, rectangle) = imageBuilder.selectedSize()
+        if (size > SIZE_LIMIT_TO_WARN) {
             if (Messages.showYesNoDialog(
                     project,
                     "Copying such a big image could be slow and may take a lot of memory. Proceed?",
@@ -55,7 +56,7 @@ class CopyImageAction : AnAction() {
             }
         }
 
-        val image = imageBuilder.createImage() ?: return
+        val image = imageBuilder.createImage(rectangle) ?: return
 
         val clipboard = Toolkit.getDefaultToolkit().systemClipboard
         clipboard.setContents(image) { _, _ -> }
