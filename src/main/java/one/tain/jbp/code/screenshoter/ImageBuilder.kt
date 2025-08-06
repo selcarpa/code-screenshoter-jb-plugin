@@ -149,7 +149,7 @@ internal class ImageBuilder(private val editor: Editor) {
                 getInstance(Objects.requireNonNull<Project>(editor.project))
             if (provider.state.removeCaret) {
                 if (editor is EditorEx) {
-                    editor.setCaretEnabled(false)
+                    editor.setCaretEnabled(true)
                 }
                 caretModel.moveToOffset(offset)
             }
