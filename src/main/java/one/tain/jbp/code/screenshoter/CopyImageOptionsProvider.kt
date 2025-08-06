@@ -24,11 +24,17 @@ class CopyImageOptionsProvider : PersistentStateComponent<CopyImageOptionsProvid
     }
 
     data class State(
+        /** Image scale factor, default is 4.0 */
         val scale: Double = 4.0,
+        /** Whether to remove caret, default is true */
         val removeCaret: Boolean = true,
+        /** Whether to chop indentation, default is true */
         val chopIndentation: Boolean = true,
+        /** Directory path to save images, can be null */
         val directoryToSave: String? = null,
+        /** Image padding, default is 0 */
         val padding: Int = 0,
+        /** Image format, default is PNG */
         val format: TransferableImage.Format = TransferableImage.Format.PNG
     )
 }

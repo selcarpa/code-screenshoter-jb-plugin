@@ -27,6 +27,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 val DATE_TIME_PATTERN: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+const val SIZE_LIMIT_TO_WARN: Long = 3000000L
 
 class CopyImageAction : AnAction() {
     override fun actionPerformed(event: AnActionEvent) {
@@ -130,7 +131,5 @@ class CopyImageAction : AnAction() {
 
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 
-    companion object {
-        const val SIZE_LIMIT_TO_WARN: Long = 3000000L
-    }
+
 }
