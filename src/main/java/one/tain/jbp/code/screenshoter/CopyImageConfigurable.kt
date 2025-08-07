@@ -15,9 +15,6 @@ import javax.swing.event.ChangeEvent
 
 private const val SLIDER_SCALE = 2.0
 
-/**
- * @author Tagir Valeev
- */
 class CopyImageConfigurable(private val myProject: Project) : SearchableConfigurable, NoScroll {
     private lateinit var myPanel: CopyImageOptionsPanel
 
@@ -105,7 +102,7 @@ class CopyImageConfigurable(private val myProject: Project) : SearchableConfigur
                 myProject,
                 "Save to Directory",
                 singleFolderDescriptor,
-                NotNullProducer { ContainerUtil.emptyList<String>() }
+                NotNullProducer { ContainerUtil.emptyList() }
             )
             saveDirectoryPanel = field
             saveDirectory = field

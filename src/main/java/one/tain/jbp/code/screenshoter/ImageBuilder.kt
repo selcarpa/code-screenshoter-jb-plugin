@@ -15,14 +15,13 @@ import java.awt.geom.Point2D
 import java.awt.geom.Rectangle2D
 import java.io.IOException
 import java.util.*
-import java.util.regex.Pattern
 import kotlin.math.min
 
 
 internal class ImageBuilder(private val editor: Editor) {
     private val project: Project = Objects.requireNonNull<Project>(editor.project)
 
-    fun createImage(r:Rectangle2D): TransferableImage<*>? {
+    fun createImage(r: Rectangle2D): TransferableImage<*>? {
 
         val state: EditorState = EditorState.from(editor)
         try {
@@ -67,14 +66,14 @@ internal class ImageBuilder(private val editor: Editor) {
         }
     }
 
-    fun  selectedSize(): Pair<Long,Rectangle2D>{
-            val options =
-                getInstance(project).state
-            val rectangle = this.selectionRectangle
-            val sizeX = rectangle.width + options.padding * 2
-            val sizeY = rectangle.height + options.padding * 2
-            return (sizeX * sizeY * options.scale * options.scale).toLong() to rectangle
-        }
+    fun selectedSize(): Pair<Long, Rectangle2D> {
+        val options =
+            getInstance(project).state
+        val rectangle = this.selectionRectangle
+        val sizeX = rectangle.width + options.padding * 2
+        val sizeY = rectangle.height + options.padding * 2
+        return (sizeX * sizeY * options.scale * options.scale).toLong() to rectangle
+    }
 
     private val selectionRectangle: Rectangle2D
         get() {
@@ -167,7 +166,6 @@ internal class ImageBuilder(private val editor: Editor) {
     }
 
     companion object {
-        private val EMPTY_SUFFIX: Pattern = Pattern.compile("\n\\s+$")
 
         private fun getRange(editor: Editor): TextRange {
             val selectionModel = editor.selectionModel
