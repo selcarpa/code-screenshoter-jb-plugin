@@ -63,7 +63,7 @@ class CopyImageConfigurable(private val myProject: Project) : SearchableConfigur
         private lateinit var saveDirectoryPanel: JPanel
         private lateinit var padding: JTextField
         private lateinit var saveDirectory: TextFieldWithHistoryWithBrowseButton
-        private lateinit var format: JComboBox<TransferableImage.Format>
+        private lateinit var format: JComboBox<Format>
 
         fun toState(): CopyImageOptionsProvider.State {
             return CopyImageOptionsProvider.State(
@@ -73,8 +73,8 @@ class CopyImageConfigurable(private val myProject: Project) : SearchableConfigur
                 removeCaret = removeCaret.isSelected,
                 directoryToSave = saveDirectory.text,
                 format = format.selectedItem?.let {
-                    it as TransferableImage.Format?
-                } ?: TransferableImage.Format.PNG)
+                    it as Format?
+                } ?: Format.PNG)
         }
 
         fun fromState(state: CopyImageOptionsProvider.State) {
@@ -91,7 +91,7 @@ class CopyImageConfigurable(private val myProject: Project) : SearchableConfigur
                 scale.text = (slider.value / SLIDER_SCALE).toString()
             }
 
-            TransferableImage.Format.entries.forEach { item ->
+            Format.entries.forEach { item ->
                 format.addItem(item)
             }
         }

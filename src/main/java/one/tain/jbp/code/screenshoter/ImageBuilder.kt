@@ -33,7 +33,7 @@ internal class ImageBuilder(private val editor: Editor) {
             val currentTransform = contentGraphics.transform
             val newTransform = AffineTransform(currentTransform)
             newTransform.scale(scale, scale)
-            val format: TransferableImage.Format = options.format
+            val format: Format = options.format
             // To flush glyph cache
             format.paint(contentComponent, newTransform, 1, 1, JBColor.BLACK, 0)
 

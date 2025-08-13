@@ -35,6 +35,6 @@ class CopyImageOptionsProvider : PersistentStateComponent<CopyImageOptionsProvid
         /** Image padding, default is 0 */
         val padding: Int = 0,
         /** Image format, default is PNG */
-        val format: TransferableImage.Format = TransferableImage.Format.PNG
+        val format: Format = Format.PNG
     )
 }
