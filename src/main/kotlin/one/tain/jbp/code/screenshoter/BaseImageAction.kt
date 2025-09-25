@@ -10,13 +10,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.SystemProperties
 import one.tain.jbp.code.screenshoter.CopyImageOptionsProvider.Companion.getInstance
 import one.tain.jbp.code.screenshoter.CopyImageUtils.getEditor
 import one.tain.jbp.code.screenshoter.CopyImageUtils.notificationGroup
 import one.tain.jbp.code.screenshoter.CopyImageUtils.showError
-import one.tain.jbp.code.screenshoter.DATE_TIME_PATTERN
-import one.tain.jbp.code.screenshoter.SIZE_LIMIT_TO_WARN
 import java.awt.Desktop
 import java.awt.geom.Rectangle2D
 import java.io.IOException

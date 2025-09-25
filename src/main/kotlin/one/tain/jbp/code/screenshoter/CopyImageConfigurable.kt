@@ -23,7 +23,7 @@ class CopyImageConfigurable(private val myProject: Project) : SearchableConfigur
     }
 
     override fun getId(): String {
-        return "screenshoter"
+        return "one/tain/jbp/code/screenshoter"
     }
 
     override fun getHelpTopic(): String? {
