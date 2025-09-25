@@ -55,24 +55,24 @@ class CopyImageConfigurable(private val myProject: Project) : SearchableConfigur
     }
 
     inner class CopyImageOptionsPanel {
-        private lateinit var scale: JTextField
+        private lateinit var scaleTextField: JTextField
         private lateinit var chopIndentation: JCheckBox
         private lateinit var removeCaret: JCheckBox
         lateinit var wholePanel: JPanel
-        private lateinit var slider: JSlider
-        private lateinit var saveDirectoryPanel: JPanel
-        private lateinit var padding: JTextField
+        private lateinit var scaleSlider: JSlider
+        private lateinit var directorySelectionPanel: JPanel
+        private lateinit var paddingTextField: JTextField
         private lateinit var saveDirectory: TextFieldWithHistoryWithBrowseButton
-        private lateinit var format: JComboBox<Format>
+        private lateinit var formatComboBox: JComboBox<Format>
 
         fun toState(): CopyImageOptionsProvider.State {
             return CopyImageOptionsProvider.State(
-                scale = scale.text.trim().toDoubleOrNull() ?: 4.0,
-                padding = padding.text.trim().toIntOrNull() ?: 0,
+                scale = scaleTextField.text.trim().toDoubleOrNull() ?: 4.0,
+                padding = paddingTextField.text.trim().toIntOrNull() ?: 0,
                 chopIndentation = chopIndentation.isSelected,
                 removeCaret = removeCaret.isSelected,
                 directoryToSave = saveDirectory.text,
-                format = format.selectedItem?.let {
+                format = formatComboBox.selectedItem?.let {
                     it as Format?
                 } ?: Format.PNG)
         }
@@ -80,19 +80,19 @@ class CopyImageConfigurable(private val myProject: Project) : SearchableConfigur
         fun fromState(state: CopyImageOptionsProvider.State) {
             chopIndentation.isSelected = state.chopIndentation
             removeCaret.isSelected = state.removeCaret
-            slider.value = (state.scale * SLIDER_SCALE).toInt()
+            scaleSlider.value = (state.scale * SLIDER_SCALE).toInt()
             saveDirectory.text = StringUtil.notNullize(state.directoryToSave)
-            padding.text = state.padding.toString()
-            format.selectedIndex = state.format.ordinal
+            paddingTextField.text = state.padding.toString()
+            formatComboBox.selectedIndex = state.format.ordinal
         }
 
         fun init() {
-            slider.addChangeListener { _: ChangeEvent ->
-                scale.text = (slider.value / SLIDER_SCALE).toString()
+            scaleSlider.addChangeListener { _: ChangeEvent ->
+                scaleTextField.text = (scaleSlider.value / SLIDER_SCALE).toString()
             }
 
             Format.entries.forEach { item ->
-                format.addItem(item)
+                formatComboBox.addItem(item)
             }
         }
 
@@ -104,7 +104,7 @@ class CopyImageConfigurable(private val myProject: Project) : SearchableConfigur
                 singleFolderDescriptor,
                 NotNullProducer { ContainerUtil.emptyList() }
             )
-            saveDirectoryPanel = field
+            directorySelectionPanel = field
             saveDirectory = field
         }
     }

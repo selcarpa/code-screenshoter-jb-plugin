@@ -22,14 +22,13 @@ internal class ImageBuilder(private val editor: Editor) {
     private val project: Project = Objects.requireNonNull<Project>(editor.project)
 
     fun createImage(r: Rectangle2D): TransferableImage<*>? {
-
         val state: EditorState = EditorState.from(editor)
         try {
             resetEditor()
             val options = getInstance(project).state
             val scale = options.scale
             val contentComponent = editor.contentComponent
-            val contentGraphics = contentComponent.getGraphics() as Graphics2D
+            val contentGraphics = contentComponent.getGraphics() as? Graphics2D ?: return null
             val currentTransform = contentGraphics.transform
             val newTransform = AffineTransform(currentTransform)
             newTransform.scale(scale, scale)
@@ -53,15 +52,24 @@ internal class ImageBuilder(private val editor: Editor) {
     }
 
     private fun resetEditor() {
-        val document = editor.document
-        val range: TextRange = getRange(editor)
+        val options = getInstance(project).state
         editor.selectionModel.removeSelection()
-        if (getInstance(project).state.removeCaret) {
-            editor.caretModel
-                .moveToOffset(if (range.startOffset == 0) document.getLineEndOffset(document.lineCount - 1) else 0)
+
+        if (options.removeCaret) {
+            val document = editor.document
+            val range: TextRange = getRange(editor)
+            val targetOffset = if (range.startOffset == 0) {
+                document.getLineEndOffset(document.lineCount - 1)
+            } else {
+                0
+            }
+
+            editor.caretModel.moveToOffset(targetOffset)
+
             if (editor is EditorEx) {
                 editor.setCaretEnabled(false)
             }
+
             editor.settings.isCaretRowShown = false
         }
     }
@@ -144,8 +152,7 @@ internal class ImageBuilder(private val editor: Editor) {
             editor.settings.isCaretRowShown = caretRow
             val selectionModel = editor.selectionModel
             val caretModel = editor.caretModel
-            val provider =
-                getInstance(Objects.requireNonNull<Project>(editor.project))
+            val provider = getInstance(editor.project ?: return)
             if (provider.state.removeCaret) {
                 if (editor is EditorEx) {
                     editor.setCaretEnabled(true)
@@ -175,6 +182,7 @@ internal class ImageBuilder(private val editor: Editor) {
         }
 
         private fun includePoint(r: Rectangle2D, p: Point2D?) {
+            if (p == null) return
             if (r.isEmpty) {
                 r.setFrame(p, Dimension(1, 1))
             } else {
