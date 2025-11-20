@@ -42,7 +42,7 @@ abstract class BaseImageAction : AnAction() {
             if (Messages.showYesNoDialog(
                     project,
                     getWarningMessage(),
-                    "Code Screenshots", getYesButtonText(), "Cancel", null
+                    CodeScreenshoterBundle.message("plugin.name"), getYesButtonText(), CodeScreenshoterBundle.message("message.cancel"), null
                 ) != Messages.YES
             ) {
                 return null
@@ -75,19 +75,18 @@ abstract class BaseImageAction : AnAction() {
                 StringUtil.escapeXmlEntities(StringUtil.shortenPathWithEllipsis(path.toString(), 50))
             val notification = notificationGroup
                 .createNotification(pathRepresentation, NotificationType.INFORMATION)
-                .setTitle("Code screenshots")
-                .setSubtitle("Image was saved:")
+                .setTitle(CodeScreenshoterBundle.message("notification.title"))
+                .setSubtitle(CodeScreenshoterBundle.message("notification.image.saved"))
             if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
-                notification.addAction(object : NotificationAction("Open") {
+                notification.addAction(object : NotificationAction(CodeScreenshoterBundle.message("action.open.name")) {
                     override fun actionPerformed(anActionEvent: AnActionEvent, notification: Notification) {
                         try {
                             Desktop.getDesktop().open(path.toFile())
                         } catch (e: IOException) {
                             showError(
-                                project, "Cannot open image:  " + StringUtil.escapeXmlEntities(
-                                    path.toString()
-                                ) + ":<br>" + StringUtil.escapeXmlEntities(
-                                    StringUtil.notNullize(e.localizedMessage)
+                                project, CodeScreenshoterBundle.message("error.open.image",
+                                    StringUtil.escapeXmlEntities(path.toString()) + ":<br>" +
+                                    StringUtil.escapeXmlEntities(StringUtil.notNullize(e.localizedMessage))
                                 )
                             )
                         }
@@ -97,16 +96,17 @@ abstract class BaseImageAction : AnAction() {
             notification.notify(project)
         } catch (e: FileAlreadyExistsException) {
             showError(
-                project, "Cannot save image:  " + StringUtil.escapeXmlEntities(
-                    path.toString()
-                ) + ":<br>Not a directory: " + StringUtil.escapeXmlEntities(e.file)
+                project, CodeScreenshoterBundle.message("error.save.image",
+                    StringUtil.escapeXmlEntities(path.toString()) + ":<br>" +
+                    CodeScreenshoterBundle.message("error.not.directory") + " " +
+                    StringUtil.escapeXmlEntities(e.file)
+                )
             )
         } catch (e: IOException) {
             showError(
-                project, "Cannot save image:  " + StringUtil.escapeXmlEntities(
-                    path.toString()
-                ) + ":<br>" + StringUtil.escapeXmlEntities(
-                    StringUtil.notNullize(e.localizedMessage)
+                project, CodeScreenshoterBundle.message("error.save.image",
+                    StringUtil.escapeXmlEntities(path.toString()) + ":<br>" +
+                    StringUtil.escapeXmlEntities(StringUtil.notNullize(e.localizedMessage))
                 )
             )
         }

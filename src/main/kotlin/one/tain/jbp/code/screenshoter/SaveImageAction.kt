@@ -12,13 +12,13 @@ class SaveImageAction : BaseImageAction() {
         saveImage(image, project)
     }
 
-    override fun getUnavailableMessage(): String = "'Save as Image' is available in text editors only"
+    override fun getUnavailableMessage(): String = CodeScreenshoterBundle.message("action.save.as.image.name") + CodeScreenshoterBundle.message("error.only.editor.support")
 
-    override fun getNoSelectionMessage(): String = "Please select the text fragment to save"
+    override fun getNoSelectionMessage(): String = CodeScreenshoterBundle.message("message.select.text.save")
 
-    override fun getWarningMessage(): String = "Saving such a big image could be slow and may take a lot of memory. Proceed?"
+    override fun getWarningMessage(): String = CodeScreenshoterBundle.message("message.large.image.save.warning")
 
-    override fun getYesButtonText(): String = "Yes, Save It!"
+    override fun getYesButtonText(): String = CodeScreenshoterBundle.message("message.yes.save")
 
     override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.EDT

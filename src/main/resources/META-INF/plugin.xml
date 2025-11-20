@@ -3,6 +3,8 @@
     <name>Code Screenshots</name>
     <vendor email="selcarpa@gmail.com" url="https://github.com/selcarpa/screenshoter/">selcarpa</vendor>
 
+    <resource-bundle>messages.CodeScreenshoterBundle</resource-bundle>
+
     <description><![CDATA[
       <p><b><a href="https://github.com/selcarpa/screenshoter">Code Screenshots</a></b></p>
       <p>A simple and powerful IDEA plugin forked from <a href="https://github.com/amaembo/screenshoter">amaembo/screenshoter</a>, designed to help you capture sharp, high-quality code screenshots directly from your editor.</p>
@@ -11,6 +13,7 @@
 
     <change-notes><![CDATA[
       <ul>
+        <li>Version 2.0.4: i18n support</li>
         <li>Version 2.0.3: Move setting to "Other Settings/Code Screenshots"</li>
         <li>Version 2.0.2: Update 2025.2 Compatible</li>
         <li>Version 2.0.1: Modify some description</li>

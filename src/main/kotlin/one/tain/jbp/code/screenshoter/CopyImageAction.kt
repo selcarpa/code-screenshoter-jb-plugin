@@ -21,11 +21,11 @@ class CopyImageAction : BaseImageAction() {
         clipboard.setContents(image) { _, _ -> }
 
         notificationGroup
-            .createNotification("Image was copied to the clipboard", NotificationType.INFORMATION)
-            .setTitle("Code screenshots")
+            .createNotification(CodeScreenshoterBundle.message("notification.image.copied"), NotificationType.INFORMATION)
+            .setTitle(CodeScreenshoterBundle.message("notification.title"))
             .addAction(
                 DumbAwareAction.create(
-                    "Save to File",
+                    CodeScreenshoterBundle.message("action.save.to.file.name"),
                     Consumer { saveImage(image, project) })
             )
             .notify(project)
@@ -34,13 +34,13 @@ class CopyImageAction : BaseImageAction() {
         Logger.getInstance(CopyImageAction::class.java).info("Copied image in ${endTime - startTime} ms")
     }
 
-    override fun getUnavailableMessage(): String = "'Copy as Image' is available in text editors only"
+    override fun getUnavailableMessage(): String = CodeScreenshoterBundle.message("action.copy.as.image.name") +  CodeScreenshoterBundle.message("error.only.editor.support")
 
-    override fun getNoSelectionMessage(): String = "Please select the text fragment to copy"
+    override fun getNoSelectionMessage(): String = CodeScreenshoterBundle.message("message.select.text")
 
-    override fun getWarningMessage(): String = "Copying such a big image could be slow and may take a lot of memory. Proceed?"
+    override fun getWarningMessage(): String = CodeScreenshoterBundle.message("message.large.image.warning")
 
-    override fun getYesButtonText(): String = "Yes, Copy It!"
+    override fun getYesButtonText(): String = CodeScreenshoterBundle.message("message.yes.copy")
 
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 }

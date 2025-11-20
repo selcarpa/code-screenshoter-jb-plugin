@@ -10,12 +10,11 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 object ScreenShoterUtils {
-    const val pluginName = "Code Screenshots"
 
     fun pictureDefaultDirectory(): String {
         return picturesDirectory()?.let {
-            "$it${File.separator}${pluginName}${File.separator}"
-        } ?: "${SystemProperties.getUserHome()}${File.separator}${pluginName}${File.separator}"
+            "$it${File.separator}${CodeScreenshoterBundle.message("plugin.name")}${File.separator}"
+        } ?: "${SystemProperties.getUserHome()}${File.separator}${CodeScreenshoterBundle.message("plugin.name")}${File.separator}"
     }
 
     fun picturesDirectory(): String? {

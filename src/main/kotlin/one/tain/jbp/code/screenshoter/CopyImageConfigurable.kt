@@ -19,7 +19,7 @@ class CopyImageConfigurable(private val myProject: Project) : SearchableConfigur
     private lateinit var myPanel: CopyImageOptionsPanel
 
     override fun getDisplayName(): @Nls String {
-        return "Copy code as image"
+        return CodeScreenshoterBundle.message("configurable.display.name")
     }
 
     override fun getId(): String {
@@ -100,7 +100,7 @@ class CopyImageConfigurable(private val myProject: Project) : SearchableConfigur
             val singleFolderDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
             val field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
                 myProject,
-                "Save to Directory",
+                CodeScreenshoterBundle.message("configurable.save.directory"),
                 singleFolderDescriptor,
                 NotNullProducer { ContainerUtil.emptyList() }
             )
