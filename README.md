@@ -1,4 +1,5 @@
 # code-screenshoter-jb-plugin
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/selcarpa/code-screenshoter-jb-plugin)
 
 Simple IDEA plugin fork from [amaembo/screenshoter](https://github.com/amaembo/screenshoter).
 
