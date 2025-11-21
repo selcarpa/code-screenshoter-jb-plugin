@@ -13,7 +13,7 @@
 
     <change-notes><![CDATA[
       <ul>
-        <li>Version 2.0.4: i18n support</li>
+        <li>Version 2.0.4: Internationalization (i18n) support with English and Chinese translations; Comprehensive message bundling for all user-facing strings; Image size warning and date/time format setting options; Support for configuring screenshot filename, time, and size warning thresholds; Refactored the screenshot configuration panel implementation; Fixed notification title for i18n support</li>
         <li>Version 2.0.3: Move setting to "Other Settings/Code Screenshots"</li>
         <li>Version 2.0.2: Update 2025.2 Compatible</li>
         <li>Version 2.0.1: Modify some description</li>

@@ -4,10 +4,21 @@ All notable changes to the Code Screenshots plugin will be documented in this fi
 
 ## [Unreleased]
 
+## [2.0.4] - 2025-11-21
+
 ### Added
 - Internationalization (i18n) support with English and Chinese translations
 - Comprehensive message bundling for all user-facing strings
+- Image size warning and date/time format setting options
+- Support for configuring screenshot filename, time, and size warning thresholds
+
+### Changed
+- Refactored the screenshot configuration panel implementation
+- Refactored the screenshot configuration panel and optimized warning messages
 - Improved project documentation and descriptions
+
+### Fixed
+- Fixed notification title for i18n support
 
 ## [2.0.3] - 2024-07-20
 
