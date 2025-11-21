@@ -32,7 +32,7 @@ class CopyImageOptionsProvider : PersistentStateComponent<CopyImageOptionsProvid
         /** Whether to chop indentation, default is true */
         val chopIndentation: Boolean = true,
         /** Directory path to save images, can be null */
-        val directoryToSave: String? = null,
+        val directoryToSave: String? = ScreenShoterUtils.pictureDefaultDirectory(),
         /** Image padding, default is 0 */
         val padding: Int = 0,
         /** Image format, default is PNG */
@@ -44,13 +44,13 @@ class CopyImageOptionsProvider : PersistentStateComponent<CopyImageOptionsProvid
     )
 }
 
-fun getDateTimePattern(project: com.intellij.openapi.project.Project?): DateTimeFormatter {
+fun getDateTimePattern(project: Project?): DateTimeFormatter {
     val options = project?.let { CopyImageOptionsProvider.getInstance(it).state }
     val pattern = options?.dateTimePattern ?: "yyyyMMdd_HHmmss"
     return DateTimeFormatter.ofPattern(pattern)
 }
 
-fun getSizeLimitToWarn(project: com.intellij.openapi.project.Project?): Long {
+fun getSizeLimitToWarn(project: Project?): Long {
     val options = project?.let { CopyImageOptionsProvider.getInstance(it).state }
     return options?.sizeLimitToWarn ?: 3000000L
 }

@@ -13,8 +13,8 @@ object ScreenShoterUtils {
 
     fun pictureDefaultDirectory(): String {
         return picturesDirectory()?.let {
-            "$it${File.separator}${CodeScreenshoterBundle.message("plugin.name")}${File.separator}"
-        } ?: "${SystemProperties.getUserHome()}${File.separator}${CodeScreenshoterBundle.message("plugin.name")}${File.separator}"
+            "$it${File.separator}${CodeScreenshoterBundle.message("plugin.en.name")}${File.separator}"
+        } ?: "${SystemProperties.getUserHome()}${File.separator}${CodeScreenshoterBundle.message("plugin.en.name")}${File.separator}"
     }
 
     fun picturesDirectory(): String? {

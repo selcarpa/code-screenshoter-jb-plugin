@@ -24,6 +24,8 @@ class CopyImageOptionsPanel(private val project: Project) {
     private lateinit var paddingTextField: JTextField
     private lateinit var saveDirectory: TextFieldWithHistoryWithBrowseButton
     private lateinit var formatComboBox: JComboBox<Format>
+    private lateinit var sizeLimitToWarnTextField: JTextField
+    private lateinit var dateTimePatternTextField: JTextField
 
     init {
         createUI()
@@ -40,7 +42,7 @@ class CopyImageOptionsPanel(private val project: Project) {
         constraints.fill = GridBagConstraints.HORIZONTAL
 
         // Scale section
-        val scaleLabel = JLabel("Scale:")
+        val scaleLabel = JLabel(CodeScreenshoterBundle.message("options.scale.label"))
         constraints.gridx = 0
         constraints.gridy = 0
         constraints.anchor = GridBagConstraints.LINE_START
@@ -74,18 +76,18 @@ class CopyImageOptionsPanel(private val project: Project) {
         constraints.gridy = 2
         constraints.gridwidth = 1
         constraints.fill = GridBagConstraints.NONE
-        chopIndentation = JCheckBox("Chop indentation")
+        chopIndentation = JCheckBox(CodeScreenshoterBundle.message("options.chop.indentation.label"))
         chopIndentation.border = BorderFactory.createEmptyBorder(5, 0, 5, 0)
         wholePanel.add(chopIndentation, constraints)
 
         // Remove caret checkbox
         constraints.gridy = 3
-        removeCaret = JCheckBox("Hide cursor")
+        removeCaret = JCheckBox(CodeScreenshoterBundle.message("options.hide.cursor.label"))
         removeCaret.border = BorderFactory.createEmptyBorder(5, 0, 5, 0)
         wholePanel.add(removeCaret, constraints)
 
         // Padding section
-        val paddingLabel = JLabel("Padding:")
+        val paddingLabel = JLabel(CodeScreenshoterBundle.message("options.padding.label"))
         constraints.gridy = 4
         constraints.gridx = 0
         constraints.fill = GridBagConstraints.NONE
@@ -99,7 +101,7 @@ class CopyImageOptionsPanel(private val project: Project) {
         wholePanel.add(paddingTextField, constraints)
 
         // Save directory section
-        val dirLabel = JLabel("Save to &directory:")
+        val dirLabel = JLabel(CodeScreenshoterBundle.message("options.save.directory.label"))
         constraints.gridx = 0
         constraints.gridy = 5
         constraints.anchor = GridBagConstraints.LINE_START
@@ -120,7 +122,7 @@ class CopyImageOptionsPanel(private val project: Project) {
         wholePanel.add(saveDirectory, constraints)
 
         // Format section
-        val formatLabel = JLabel("Output format:")
+        val formatLabel = JLabel(CodeScreenshoterBundle.message("options.output.format.label"))
         constraints.gridx = 0
         constraints.gridy = 6
         constraints.weightx = 0.0
@@ -134,10 +136,40 @@ class CopyImageOptionsPanel(private val project: Project) {
         constraints.fill = GridBagConstraints.HORIZONTAL
         wholePanel.add(formatComboBox, constraints)
 
+        // Size limit to warn section
+        val sizeLimitToWarnLabel = JLabel(CodeScreenshoterBundle.message("options.size.limit.warn.label"))
+        constraints.gridx = 0
+        constraints.gridy = 7
+        constraints.weightx = 0.0
+        constraints.fill = GridBagConstraints.NONE
+        constraints.anchor = GridBagConstraints.LINE_START
+        wholePanel.add(sizeLimitToWarnLabel, constraints)
+
+        sizeLimitToWarnTextField = JTextField()
+        constraints.gridx = 1
+        constraints.anchor = GridBagConstraints.LINE_START
+        constraints.fill = GridBagConstraints.HORIZONTAL
+        wholePanel.add(sizeLimitToWarnTextField, constraints)
+
+        // Date time pattern section
+        val dateTimePatternLabel = JLabel(CodeScreenshoterBundle.message("options.datetime.pattern.label"))
+        constraints.gridx = 0
+        constraints.gridy = 8
+        constraints.weightx = 0.0
+        constraints.fill = GridBagConstraints.NONE
+        constraints.anchor = GridBagConstraints.LINE_START
+        wholePanel.add(dateTimePatternLabel, constraints)
+
+        dateTimePatternTextField = JTextField()
+        constraints.gridx = 1
+        constraints.anchor = GridBagConstraints.LINE_START
+        constraints.fill = GridBagConstraints.HORIZONTAL
+        wholePanel.add(dateTimePatternTextField, constraints)
+
         // Vertical spacer
         val vSpacer = Box.createVerticalGlue()
         constraints.gridx = 0
-        constraints.gridy = 7
+        constraints.gridy = 9
         constraints.gridwidth = 2
         constraints.weighty = 1.0
         constraints.fill = GridBagConstraints.VERTICAL
@@ -153,7 +185,9 @@ class CopyImageOptionsPanel(private val project: Project) {
             directoryToSave = saveDirectory.text,
             format = formatComboBox.selectedItem?.let {
                 it as Format?
-            } ?: Format.PNG
+            } ?: Format.PNG,
+            sizeLimitToWarn = sizeLimitToWarnTextField.text.trim().toLongOrNull() ?: 3000000L,
+            dateTimePattern = dateTimePatternTextField.text.trim()
         )
     }
 
@@ -164,6 +198,8 @@ class CopyImageOptionsPanel(private val project: Project) {
         saveDirectory.text = StringUtil.notNullize(state.directoryToSave)
         paddingTextField.text = state.padding.toString()
         formatComboBox.selectedIndex = state.format.ordinal
+        sizeLimitToWarnTextField.text = state.sizeLimitToWarn.toString()
+        dateTimePatternTextField.text = state.dateTimePattern
     }
 
     fun init() {
