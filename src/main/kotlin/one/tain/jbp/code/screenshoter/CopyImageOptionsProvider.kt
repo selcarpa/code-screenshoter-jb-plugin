@@ -2,7 +2,6 @@ package one.tain.jbp.code.screenshoter
 
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
-import java.time.format.DateTimeFormatter
 
 @Service(Service.Level.PROJECT)
 @State(name = "CopyImageOptionsProvider", storages = [Storage(StoragePathMacros.WORKSPACE_FILE)])
@@ -12,16 +11,16 @@ class CopyImageOptionsProvider : PersistentStateComponent<CopyImageOptionsProvid
         fun getInstance(project: Project): CopyImageOptionsProvider {
             return project.getService(CopyImageOptionsProvider::class.java)
         }
+        var defaultState = State()
     }
 
-    private var myState = State()
 
     override fun getState(): State {
-        return myState
+        return defaultState
     }
 
     override fun loadState(state: State) {
-        myState = state
+        defaultState = state
     }
 
     data class State(
@@ -32,7 +31,7 @@ class CopyImageOptionsProvider : PersistentStateComponent<CopyImageOptionsProvid
         /** Whether to chop indentation, default is true */
         val chopIndentation: Boolean = true,
         /** Directory path to save images, can be null */
-        val directoryToSave: String? = ScreenShoterUtils.pictureDefaultDirectory(),
+        val directoryToSave: String = ScreenShoterUtils.pictureDefaultDirectory(),
         /** Image padding, default is 0 */
         val padding: Int = 0,
         /** Image format, default is PNG */
@@ -42,15 +41,4 @@ class CopyImageOptionsProvider : PersistentStateComponent<CopyImageOptionsProvid
         /** Date time pattern for file naming, default is yyyyMMdd_HHmmss */
         val dateTimePattern: String = "yyyyMMdd_HHmmss"
     )
-}
-
-fun getDateTimePattern(project: Project?): DateTimeFormatter {
-    val options = project?.let { CopyImageOptionsProvider.getInstance(it).state }
-    val pattern = options?.dateTimePattern ?: "yyyyMMdd_HHmmss"
-    return DateTimeFormatter.ofPattern(pattern)
-}
-
-fun getSizeLimitToWarn(project: Project?): Long {
-    val options = project?.let { CopyImageOptionsProvider.getInstance(it).state }
-    return options?.sizeLimitToWarn ?: 3000000L
 }

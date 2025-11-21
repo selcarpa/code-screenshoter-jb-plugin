@@ -21,6 +21,7 @@ import java.nio.file.FileAlreadyExistsException
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 abstract class BaseImageAction : AnAction() {
 
@@ -38,11 +39,14 @@ abstract class BaseImageAction : AnAction() {
 
         val imageBuilder = ImageBuilder(editor)
         val (size, rectangle) = imageBuilder.selectedSize()
-        if (size > getSizeLimitToWarn(project)) {
+        if (size > getInstance(project).state.sizeLimitToWarn) {
             if (Messages.showYesNoDialog(
                     project,
                     getWarningMessage(),
-                    CodeScreenshoterBundle.message("plugin.name"), getYesButtonText(), CodeScreenshoterBundle.message("message.cancel"), null
+                    CodeScreenshoterBundle.message("plugin.name"),
+                    getYesButtonText(),
+                    CodeScreenshoterBundle.message("message.cancel"),
+                    null
                 ) != Messages.YES
             ) {
                 return null
@@ -60,9 +64,9 @@ abstract class BaseImageAction : AnAction() {
         if (StringUtil.isEmpty(toSave)) {
             toSave = ScreenShoterUtils.pictureDefaultDirectory()
         }
-        toSave = toSave!!.trim { it <= ' ' }
+        toSave = toSave.trim { it <= ' ' }
         val now = LocalDateTime.now()
-        val date = getDateTimePattern(project).format(now)
+        val date = DateTimeFormatter.ofPattern(getInstance(project).state.dateTimePattern).format(now)
         val fileName = "Shot_" + date + "." + image.format.ext
         val path = Paths.get(FileUtil.toSystemDependentName(toSave), fileName)
         try {
@@ -84,9 +88,10 @@ abstract class BaseImageAction : AnAction() {
                             Desktop.getDesktop().open(path.toFile())
                         } catch (e: IOException) {
                             showError(
-                                project, CodeScreenshoterBundle.message("error.open.image",
+                                project, CodeScreenshoterBundle.message(
+                                    "error.open.image",
                                     StringUtil.escapeXmlEntities(path.toString()) + ":<br>" +
-                                    StringUtil.escapeXmlEntities(StringUtil.notNullize(e.localizedMessage))
+                                            StringUtil.escapeXmlEntities(StringUtil.notNullize(e.localizedMessage))
                                 )
                             )
                         }
@@ -96,17 +101,19 @@ abstract class BaseImageAction : AnAction() {
             notification.notify(project)
         } catch (e: FileAlreadyExistsException) {
             showError(
-                project, CodeScreenshoterBundle.message("error.save.image",
+                project, CodeScreenshoterBundle.message(
+                    "error.save.image",
                     StringUtil.escapeXmlEntities(path.toString()) + ":<br>" +
-                    CodeScreenshoterBundle.message("error.not.directory") + " " +
-                    StringUtil.escapeXmlEntities(e.file)
+                            CodeScreenshoterBundle.message("error.not.directory", path.toString()) + " " +
+                            StringUtil.escapeXmlEntities(e.file)
                 )
             )
         } catch (e: IOException) {
             showError(
-                project, CodeScreenshoterBundle.message("error.save.image",
+                project, CodeScreenshoterBundle.message(
+                    "error.save.image",
                     StringUtil.escapeXmlEntities(path.toString()) + ":<br>" +
-                    StringUtil.escapeXmlEntities(StringUtil.notNullize(e.localizedMessage))
+                            StringUtil.escapeXmlEntities(StringUtil.notNullize(e.localizedMessage))
                 )
             )
         }
