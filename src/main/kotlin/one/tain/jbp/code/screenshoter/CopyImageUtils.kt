@@ -9,7 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 
 object CopyImageUtils {
-    var notificationTitle: String = CodeScreenshoterBundle.message("plugin.name")
+    var notificationTitle: String = CodeScreenshoterBundle.message("plugin.en.name")
 
     @JvmStatic
     fun getEditor(event: AnActionEvent): Editor? {
