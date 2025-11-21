@@ -19,6 +19,9 @@ import kotlin.math.min
 
 
 internal class ImageBuilder(private val editor: Editor) {
+
+    private val emptySuffix = java.util.regex.Pattern.compile("\n\\s+$")
+
     private val project: Project = Objects.requireNonNull<Project>(editor.project)
 
     fun createImage(r: Rectangle2D): TransferableImage<*>? {
@@ -120,7 +123,7 @@ internal class ImageBuilder(private val editor: Editor) {
         for (i in start..end) {
             // Skip empty suffixes at the end of lines if chop indentation is enabled
             if (options.chopIndentation &&
-                EMPTY_SUFFIX.matcher(text.take(min(i - start + 1, text.length))).find()
+                emptySuffix.matcher(text.take(min(i - start + 1, text.length))).find()
             ) {
                 continue
             }

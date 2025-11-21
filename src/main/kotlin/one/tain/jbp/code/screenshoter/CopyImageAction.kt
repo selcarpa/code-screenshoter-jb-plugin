@@ -34,7 +34,7 @@ class CopyImageAction : BaseImageAction() {
         Logger.getInstance(CopyImageAction::class.java).info("Copied image in ${endTime - startTime} ms")
     }
 
-    override fun getUnavailableMessage(): String = CodeScreenshoterBundle.message("action.copy.as.image.name") +  CodeScreenshoterBundle.message("error.only.editor.support")
+    override fun getUnavailableMessage(): String = CodeScreenshoterBundle.message("action.copy.as.image.name") + " " + CodeScreenshoterBundle.message("error.only.editor.support")
 
     override fun getNoSelectionMessage(): String = CodeScreenshoterBundle.message("message.select.text")
 

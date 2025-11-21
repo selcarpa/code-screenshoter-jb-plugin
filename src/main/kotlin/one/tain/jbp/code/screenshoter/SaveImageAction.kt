@@ -12,7 +12,7 @@ class SaveImageAction : BaseImageAction() {
         saveImage(image, project)
     }
 
-    override fun getUnavailableMessage(): String = CodeScreenshoterBundle.message("action.save.as.image.name") + CodeScreenshoterBundle.message("error.only.editor.support")
+    override fun getUnavailableMessage(): String = CodeScreenshoterBundle.message("action.save.as.image.name") + " " + CodeScreenshoterBundle.message("error.only.editor.support")
 
     override fun getNoSelectionMessage(): String = CodeScreenshoterBundle.message("message.select.text.save")
 

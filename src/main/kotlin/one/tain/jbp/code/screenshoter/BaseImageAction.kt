@@ -38,7 +38,7 @@ abstract class BaseImageAction : AnAction() {
 
         val imageBuilder = ImageBuilder(editor)
         val (size, rectangle) = imageBuilder.selectedSize()
-        if (size > SIZE_LIMIT_TO_WARN) {
+        if (size > getSizeLimitToWarn(project)) {
             if (Messages.showYesNoDialog(
                     project,
                     getWarningMessage(),
@@ -62,7 +62,7 @@ abstract class BaseImageAction : AnAction() {
         }
         toSave = toSave!!.trim { it <= ' ' }
         val now = LocalDateTime.now()
-        val date = DATE_TIME_PATTERN.format(now)
+        val date = getDateTimePattern(project).format(now)
         val fileName = "Shot_" + date + "." + image.format.ext
         val path = Paths.get(FileUtil.toSystemDependentName(toSave), fileName)
         try {
