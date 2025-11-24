@@ -160,7 +160,6 @@ class CopyImageOptionsPanel(private val project: Project) {
         val singleFolderDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
         saveDirectory = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
             project,
-            CodeScreenshoterBundle.message("configurable.save.directory"),
             singleFolderDescriptor,
             NotNullProducer { ContainerUtil.emptyList() }
         )
