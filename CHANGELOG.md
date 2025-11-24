@@ -11,6 +11,7 @@ All notable changes to the Code Screenshots plugin will be documented in this fi
 - Comprehensive message bundling for all user-facing strings
 - Image size warning and date/time format setting options
 - Support for configuring screenshot filename, time, and size warning thresholds
+- Menu item in editor popup menu
 
 ### Changed
 - Refactored the screenshot configuration panel implementation
@@ -19,6 +20,7 @@ All notable changes to the Code Screenshots plugin will be documented in this fi
 
 ### Fixed
 - Fixed notification title for i18n support
+- Fix removal API usage
 
 ## [2.0.3] - 2024-07-20
 
