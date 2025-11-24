@@ -22,6 +22,9 @@ All notable changes to the Code Screenshots plugin will be documented in this fi
 - Fixed notification title for i18n support
 - Fix removal API usage
 
+### Remove
+- Remove compatibility below 2024.3
+
 ## [2.0.3] - 2024-07-20
 
 ### Changed

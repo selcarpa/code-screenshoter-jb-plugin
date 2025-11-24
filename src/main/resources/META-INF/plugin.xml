@@ -13,7 +13,7 @@
 
     <change-notes><![CDATA[
       <ul>
-        <li>Version 2.0.4: Added internationalization (i18n) support with English and Chinese translations; bundled all user-facing strings for comprehensive localization; introduced image size warning and date/time format configuration options; enabled customization of screenshot filename patterns, timing settings, and size warning thresholds; refactored the screenshot configuration panel for better usability; fixed notification title to support internationalization; added menu item to the editor popup menu.</li>
+        <li>Version 2.0.4: Added internationalization (i18n) support with English and Chinese translations; bundled all user-facing strings for comprehensive localization; introduced image size warning and date/time format configuration options; enabled customization of screenshot filename patterns, timing settings, and size warning thresholds; refactored the screenshot configuration panel for better usability; fixed notification title to support internationalization; added menu item to the editor popup menu; remove compatibility below 2024.3</li>
         <li>Version 2.0.3: Move setting to "Other Settings/Code Screenshots"</li>
         <li>Version 2.0.2: Update 2025.2 Compatible</li>
         <li>Version 2.0.1: Modify some description</li>
