@@ -13,7 +13,7 @@
 
     <change-notes><![CDATA[
       <ul>
-        <li>Version 2.0.4: Internationalization (i18n) support with English and Chinese translations; Comprehensive message bundling for all user-facing strings; Image size warning and date/time format setting options; Support for configuring screenshot filename, time, and size warning thresholds; Refactored the screenshot configuration panel implementation; Fixed notification title for i18n support</li>
+        <li>Version 2.0.4: Added internationalization (i18n) support with English and Chinese translations; bundled all user-facing strings for comprehensive localization; introduced image size warning and date/time format configuration options; enabled customization of screenshot filename patterns, timing settings, and size warning thresholds; refactored the screenshot configuration panel for better usability; fixed notification title to support internationalization; added menu item to the editor popup menu.</li>
         <li>Version 2.0.3: Move setting to "Other Settings/Code Screenshots"</li>
         <li>Version 2.0.2: Update 2025.2 Compatible</li>
         <li>Version 2.0.1: Modify some description</li>
@@ -38,14 +38,14 @@
         <action id="one.tain.jbp.code.screenshoter.CopyImageAction"
                 class="one.tain.jbp.code.screenshoter.CopyImageAction"
                 icon="/icons/capture.svg" text="Copy as Image" description="Copy the selection as image">
-            <add-to-group group-id="EditMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt A"/>
         </action>
-        <!--    <action id="one.tain.jbp.code.screenshoter.SaveImageAction"-->
-        <!--            class="one.tain.jbp.code.screenshoter.SaveImageAction"-->
-        <!--            text="Save as Image" description="Save the selection as image">-->
-        <!--      <add-to-group group-id="EditMenu" anchor="last"/>-->
-        <!--    </action>-->
+        <action id="one.tain.jbp.code.screenshoter.SaveImageAction"
+                class="one.tain.jbp.code.screenshoter.SaveImageAction"
+                text="Save as Image" description="Save the selection as image">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
     </actions>
     <extensions defaultExtensionNs="com.intellij">
         <projectConfigurable groupId="tools" instance="one.tain.jbp.code.screenshoter.CopyImageConfigurable"
