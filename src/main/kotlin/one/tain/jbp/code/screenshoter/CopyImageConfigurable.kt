@@ -18,6 +18,90 @@ import java.awt.GridBagLayout
 import javax.swing.*
 import javax.swing.event.ChangeEvent
 
+// Scale factor for converting slider values to actual scale values
+private const val SLIDER_SCALE = 2.0
+
+/**
+ * Helper functions and abstractions for creating UI components in the configuration panel.
+ */
+private object ConfigurableUIHelper {
+    /**
+     * Creates a standard label for configuration options.
+     */
+    fun createLabel(key: String): JLabel {
+        return JLabel(CodeScreenshoterBundle.message(key))
+    }
+
+    /**
+     * Creates a standard text field with specified width.
+     */
+    fun createTextField(width: Int = 50): JTextField {
+        return JTextField().apply {
+            preferredSize = Dimension(width, preferredSize.height)
+        }
+    }
+
+    /**
+     * Creates a standard checkbox with bottom and top padding.
+     */
+    fun createCheckBox(key: String): JCheckBox {
+        return JCheckBox(CodeScreenshoterBundle.message(key)).apply {
+            border = BorderFactory.createEmptyBorder(5, 0, 5, 0)
+        }
+    }
+
+    /**
+     * Creates a standard GridBagConstraints with default configuration.
+     */
+    fun createDefaultConstraints(): GridBagConstraints {
+        return GridBagConstraints().apply {
+            insets = JBUI.insets(2)
+            weightx = 0.0
+            weighty = 0.0
+            fill = GridBagConstraints.HORIZONTAL
+        }
+    }
+
+    /**
+     * Adds a component to the panel with specified row and column.
+     */
+    fun addToPanel(
+        panel: JPanel,
+        component: JComponent,
+        constraints: GridBagConstraints,
+        row: Int,
+        col: Int,
+        fill: Int = GridBagConstraints.NONE,
+        gridWidth: Int = 1,
+        anchor: Int = GridBagConstraints.LINE_START,
+        weightX: Double = 0.0
+    ) {
+        constraints.gridx = col
+        constraints.gridy = row
+        constraints.gridwidth = gridWidth
+        constraints.fill = fill
+        constraints.anchor = anchor
+        constraints.weightx = weightX
+        panel.add(component, constraints)
+    }
+
+    /**
+     * Creates a labeled text field pair in the specified row.
+     */
+    fun addLabeledTextField(
+        panel: JPanel,
+        constraints: GridBagConstraints,
+        labelKey: String,
+        textField: JTextField,
+        row: Int
+    ): Int {
+        val label = createLabel(labelKey)
+        addToPanel(panel, label, constraints, row, 0, GridBagConstraints.NONE)
+        addToPanel(panel, textField, constraints, row, 1, GridBagConstraints.HORIZONTAL)
+        return row + 1
+    }
+}
+
 /**
  * Configurable class that provides the UI for configuring code screenshoter plugin options.
  * This class implements IntelliJ's SearchableConfigurable interface to integrate the
@@ -26,8 +110,10 @@ import javax.swing.event.ChangeEvent
  * @property project The current project for which to manage options
  */
 class CopyImageConfigurable(private val project: Project) : SearchableConfigurable, NoScroll {
-    private var panel: CopyImageOptionsPanel = CopyImageOptionsPanel(project).also {
-        it.init()
+    private val panel: CopyImageOptionsPanel by lazy {
+        CopyImageOptionsPanel(project).apply {
+            init()
+        }
     }
 
     /**
@@ -123,7 +209,6 @@ class CopyImageOptionsPanel(private val project: Project) {
     private lateinit var paddingTextField: JTextField
     private lateinit var saveDirectory: TextFieldWithHistoryWithBrowseButton
     private lateinit var formatComboBox: JComboBox<Format>
-    private lateinit var sizeLimitToWarnTextField: JTextField
     private lateinit var lineLimitToWarnTextField: JTextField
     private lateinit var dateTimePatternTextField: JTextField
     private lateinit var gutterIconsShown: JCheckBox
@@ -131,11 +216,6 @@ class CopyImageOptionsPanel(private val project: Project) {
     private lateinit var innerWhitespaceShown: JCheckBox
     private lateinit var indentGuidesShown: JCheckBox
     private lateinit var lineNumbersShown: JCheckBox
-
-    companion object {
-        private const val SLIDER_SCALE = 2.0
-
-    }
 
     init {
         createUI()
@@ -149,78 +229,98 @@ class CopyImageOptionsPanel(private val project: Project) {
         wholePanel = JPanel(GridBagLayout())
         wholePanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 
-        val constraints = GridBagConstraints()
-        constraints.insets = JBUI.insets(2)
-        constraints.weightx = 0.0
-        constraints.weighty = 0.0
-        constraints.fill = GridBagConstraints.HORIZONTAL
+        val constraints = ConfigurableUIHelper.createDefaultConstraints()
 
-        // Scale section
-        val scaleLabel = JLabel(CodeScreenshoterBundle.message("options.scale.label"))
+        var currentRow = 0
+
+        // Scale section - slider and text field
+        currentRow = createScaleSection(constraints, currentRow)
+
+        // Basic options section - checkboxes
+        currentRow = createBasicOptionsSection(constraints, currentRow)
+
+        // Input fields section - padding, directory, format, etc.
+        currentRow = createInputFieldsSection(constraints, currentRow)
+
+        // Gutter options section - checkboxes for gutter display
+        currentRow = createGutterOptionsSection(constraints, currentRow)
+
+        // Vertical spacer to take up remaining space
+        createVerticalSpacer(constraints, currentRow)
+    }
+
+    /**
+     * Creates the scale section with slider and text field.
+     */
+    private fun createScaleSection(constraints: GridBagConstraints, row: Int): Int {
+        val currentRow = row
+
+        // Scale label and text field
+        val scaleLabel = ConfigurableUIHelper.createLabel("options.scale.label")
+        ConfigurableUIHelper.addToPanel(wholePanel, scaleLabel, constraints, currentRow, 0, GridBagConstraints.NONE)
+
+        scaleTextField = JTextField().apply {
+            isEditable = false
+            horizontalAlignment = SwingConstants.LEFT
+            preferredSize = Dimension(50, preferredSize.height)
+        }
+        ConfigurableUIHelper.addToPanel(wholePanel, scaleTextField, constraints, currentRow, 1, GridBagConstraints.NONE, anchor = GridBagConstraints.LINE_START)
+
+        // Scale slider (spans both columns)
         constraints.gridx = 0
-        constraints.gridy = 0
-        constraints.anchor = GridBagConstraints.LINE_START
-        wholePanel.add(scaleLabel, constraints)
-
-        scaleTextField = JTextField()
-        scaleTextField.isEditable = false
-        scaleTextField.horizontalAlignment = SwingConstants.LEFT
-        scaleTextField.preferredSize = Dimension(50, scaleTextField.preferredSize.height)
-        constraints.gridx = 1
-        constraints.anchor = GridBagConstraints.LINE_START
-        wholePanel.add(scaleTextField, constraints)
-
-        constraints.gridx = 0
-        constraints.gridy = 1
+        constraints.gridy = currentRow + 1
         constraints.gridwidth = 2
         constraints.fill = GridBagConstraints.HORIZONTAL
-        scaleSlider = JSlider(2, 20)
-        scaleSlider.majorTickSpacing = 2
-        scaleSlider.minorTickSpacing = 1
-        scaleSlider.paintTicks = true
-        scaleSlider.snapToTicks = true
-        scaleSlider.value = 8
-        scaleTextField.text = (scaleSlider.value / SLIDER_SCALE).toString()
-        scaleSlider.addChangeListener { _: ChangeEvent ->
-            scaleTextField.text = (scaleSlider.value / SLIDER_SCALE).toString()
+
+        scaleSlider = JSlider(2, 20).apply {
+            majorTickSpacing = 2
+            minorTickSpacing = 1
+            paintTicks = true
+            snapToTicks = true
+            value = 8
+            // Set initial text value based on slider
+            scaleTextField.text = (value / SLIDER_SCALE).toString()
+            addChangeListener { _: ChangeEvent ->
+                scaleTextField.text = (value / SLIDER_SCALE).toString()
+            }
         }
         wholePanel.add(scaleSlider, constraints)
 
+        return currentRow + 2
+    }
+
+    /**
+     * Creates the basic options section with checkboxes.
+     */
+    private fun createBasicOptionsSection(constraints: GridBagConstraints, row: Int): Int {
+        var currentRow = row
+
         // Chop indentation checkbox
-        constraints.gridy = 2
-        constraints.gridwidth = 1
-        constraints.fill = GridBagConstraints.NONE
-        chopIndentation = JCheckBox(CodeScreenshoterBundle.message("options.chop.indentation.label"))
-        chopIndentation.border = BorderFactory.createEmptyBorder(5, 0, 5, 0)
-        wholePanel.add(chopIndentation, constraints)
+        chopIndentation = ConfigurableUIHelper.createCheckBox("options.chop.indentation.label")
+        ConfigurableUIHelper.addToPanel(wholePanel, chopIndentation, constraints, currentRow, 0, GridBagConstraints.NONE)
+        currentRow++
 
         // Remove caret checkbox
-        constraints.gridy = 3
-        removeCaret = JCheckBox(CodeScreenshoterBundle.message("options.hide.cursor.label"))
-        removeCaret.border = BorderFactory.createEmptyBorder(5, 0, 5, 0)
-        wholePanel.add(removeCaret, constraints)
+        removeCaret = ConfigurableUIHelper.createCheckBox("options.hide.cursor.label")
+        ConfigurableUIHelper.addToPanel(wholePanel, removeCaret, constraints, currentRow, 0, GridBagConstraints.NONE)
+        currentRow++
 
-        // Padding section
-        val paddingLabel = JLabel(CodeScreenshoterBundle.message("options.padding.label"))
-        constraints.gridy = 4
-        constraints.gridx = 0
-        constraints.fill = GridBagConstraints.NONE
-        constraints.anchor = GridBagConstraints.LINE_START
-        wholePanel.add(paddingLabel, constraints)
+        return currentRow
+    }
 
-        paddingTextField = JTextField()
-        constraints.gridx = 1
-        constraints.anchor = GridBagConstraints.LINE_START
-        paddingTextField.preferredSize = Dimension(50, paddingTextField.preferredSize.height)
-        wholePanel.add(paddingTextField, constraints)
+    /**
+     * Creates the input fields section with padding, directory, format, etc.
+     */
+    private fun createInputFieldsSection(constraints: GridBagConstraints, row: Int): Int {
+        var currentRow = row
+
+        // Padding text field with label
+        paddingTextField = ConfigurableUIHelper.createTextField()
+        currentRow = ConfigurableUIHelper.addLabeledTextField(wholePanel, constraints, "options.padding.label", paddingTextField, currentRow)
 
         // Save directory section
-        val dirLabel = JLabel(CodeScreenshoterBundle.message("options.save.directory.label"))
-        constraints.gridx = 0
-        constraints.gridy = 5
-        constraints.anchor = GridBagConstraints.LINE_START
-        constraints.fill = GridBagConstraints.NONE
-        wholePanel.add(dirLabel, constraints)
+        val dirLabel = ConfigurableUIHelper.createLabel("options.save.directory.label")
+        ConfigurableUIHelper.addToPanel(wholePanel, dirLabel, constraints, currentRow, 0, GridBagConstraints.NONE)
 
         val singleFolderDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
         saveDirectory = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
@@ -228,94 +328,69 @@ class CopyImageOptionsPanel(private val project: Project) {
             singleFolderDescriptor,
             NotNullProducer { ContainerUtil.emptyList() }
         )
-        constraints.gridx = 1
-        constraints.anchor = GridBagConstraints.LINE_START
-        constraints.fill = GridBagConstraints.HORIZONTAL
-        constraints.weightx = 1.0
-        wholePanel.add(saveDirectory, constraints)
+        ConfigurableUIHelper.addToPanel(wholePanel, saveDirectory, constraints, currentRow, 1, GridBagConstraints.HORIZONTAL, weightX = 1.0)
+        currentRow++
 
         // Format section
-        val formatLabel = JLabel(CodeScreenshoterBundle.message("options.output.format.label"))
-        constraints.gridx = 0
-        constraints.gridy = 6
-        constraints.weightx = 0.0
-        constraints.fill = GridBagConstraints.NONE
-        constraints.anchor = GridBagConstraints.LINE_START
-        wholePanel.add(formatLabel, constraints)
+        val formatLabel = ConfigurableUIHelper.createLabel("options.output.format.label")
+        ConfigurableUIHelper.addToPanel(wholePanel, formatLabel, constraints, currentRow, 0, GridBagConstraints.NONE)
 
-        formatComboBox = ComboBox()
-        constraints.gridx = 1
-        constraints.anchor = GridBagConstraints.LINE_START
-        constraints.fill = GridBagConstraints.HORIZONTAL
-        wholePanel.add(formatComboBox, constraints)
+        formatComboBox = ComboBox<Format>()
+        ConfigurableUIHelper.addToPanel(wholePanel, formatComboBox, constraints, currentRow, 1, GridBagConstraints.HORIZONTAL)
+        currentRow++
 
         // Date time pattern section
-        val dateTimePatternLabel = JLabel(CodeScreenshoterBundle.message("options.datetime.pattern.label"))
-        constraints.gridx = 0
-        constraints.gridy = 7
-        constraints.weightx = 0.0
-        constraints.fill = GridBagConstraints.NONE
-        constraints.anchor = GridBagConstraints.LINE_START
-        wholePanel.add(dateTimePatternLabel, constraints)
-
-        dateTimePatternTextField = JTextField()
-        constraints.gridx = 1
-        constraints.anchor = GridBagConstraints.LINE_START
-        constraints.fill = GridBagConstraints.HORIZONTAL
-        wholePanel.add(dateTimePatternTextField, constraints)
+        dateTimePatternTextField = ConfigurableUIHelper.createTextField()
+        currentRow = ConfigurableUIHelper.addLabeledTextField(wholePanel, constraints, "options.datetime.pattern.label", dateTimePatternTextField, currentRow)
 
         // Line limit to warn section
-        val lineLimitToWarnLabel = JLabel(CodeScreenshoterBundle.message("options.line.limit.warn.label"))
-        constraints.gridx = 0
-        constraints.gridy = 8
-        constraints.weightx = 0.0
-        constraints.fill = GridBagConstraints.NONE
-        constraints.anchor = GridBagConstraints.LINE_START
-        wholePanel.add(lineLimitToWarnLabel, constraints)
+        lineLimitToWarnTextField = ConfigurableUIHelper.createTextField()
+        currentRow = ConfigurableUIHelper.addLabeledTextField(wholePanel, constraints, "options.line.limit.warn.label", lineLimitToWarnTextField, currentRow)
 
-        lineLimitToWarnTextField = JTextField()
-        constraints.gridx = 1
-        constraints.anchor = GridBagConstraints.LINE_START
-        constraints.fill = GridBagConstraints.HORIZONTAL
-        wholePanel.add(lineLimitToWarnTextField, constraints)
+        return currentRow
+    }
+
+    /**
+     * Creates the gutter options section with checkboxes for gutter display settings.
+     */
+    private fun createGutterOptionsSection(constraints: GridBagConstraints, row: Int): Int {
+        var currentRow = row
 
         // Gutter icons shown checkbox
-        constraints.gridx = 0
-        constraints.gridy = 9
-        constraints.gridwidth = 1
-        constraints.fill = GridBagConstraints.NONE
-        gutterIconsShown = JCheckBox(CodeScreenshoterBundle.message("options.gutter.icons.shown.label"))
-        gutterIconsShown.border = BorderFactory.createEmptyBorder(5, 0, 5, 0)
-        wholePanel.add(gutterIconsShown, constraints)
+        gutterIconsShown = ConfigurableUIHelper.createCheckBox("options.gutter.icons.shown.label")
+        ConfigurableUIHelper.addToPanel(wholePanel, gutterIconsShown, constraints, currentRow, 0, GridBagConstraints.NONE)
+        currentRow++
 
         // Folding outline shown checkbox
-        constraints.gridy = 10
-        foldingOutlineShown = JCheckBox(CodeScreenshoterBundle.message("options.folding.outline.shown.label"))
-        foldingOutlineShown.border = BorderFactory.createEmptyBorder(5, 0, 5, 0)
-        wholePanel.add(foldingOutlineShown, constraints)
+        foldingOutlineShown = ConfigurableUIHelper.createCheckBox("options.folding.outline.shown.label")
+        ConfigurableUIHelper.addToPanel(wholePanel, foldingOutlineShown, constraints, currentRow, 0, GridBagConstraints.NONE)
+        currentRow++
 
         // Inner whitespace shown checkbox
-        constraints.gridy = 11
-        innerWhitespaceShown = JCheckBox(CodeScreenshoterBundle.message("options.inner.whitespace.shown.label"))
-        innerWhitespaceShown.border = BorderFactory.createEmptyBorder(5, 0, 5, 0)
-        wholePanel.add(innerWhitespaceShown, constraints)
+        innerWhitespaceShown = ConfigurableUIHelper.createCheckBox("options.inner.whitespace.shown.label")
+        ConfigurableUIHelper.addToPanel(wholePanel, innerWhitespaceShown, constraints, currentRow, 0, GridBagConstraints.NONE)
+        currentRow++
 
         // Indent guides shown checkbox
-        constraints.gridy = 12
-        indentGuidesShown = JCheckBox(CodeScreenshoterBundle.message("options.indent.guides.shown.label"))
-        indentGuidesShown.border = BorderFactory.createEmptyBorder(5, 0, 5, 0)
-        wholePanel.add(indentGuidesShown, constraints)
+        indentGuidesShown = ConfigurableUIHelper.createCheckBox("options.indent.guides.shown.label")
+        ConfigurableUIHelper.addToPanel(wholePanel, indentGuidesShown, constraints, currentRow, 0, GridBagConstraints.NONE)
+        currentRow++
 
         // Line numbers shown checkbox
-        constraints.gridy = 13
-        lineNumbersShown = JCheckBox(CodeScreenshoterBundle.message("options.line.numbers.shown.label"))
-        lineNumbersShown.border = BorderFactory.createEmptyBorder(5, 0, 5, 0)
-        wholePanel.add(lineNumbersShown, constraints)
+        lineNumbersShown = ConfigurableUIHelper.createCheckBox("options.line.numbers.shown.label")
+        ConfigurableUIHelper.addToPanel(wholePanel, lineNumbersShown, constraints, currentRow, 0, GridBagConstraints.NONE)
+        currentRow++
 
-        // Vertical spacer
+        return currentRow
+    }
+
+    /**
+     * Creates a vertical spacer to fill remaining space in the panel.
+     */
+    private fun createVerticalSpacer(constraints: GridBagConstraints, row: Int) {
         val vSpacer = Box.createVerticalGlue()
         constraints.gridx = 0
-        constraints.gridy = 14
+        constraints.gridy = row
         constraints.gridwidth = 2
         constraints.weighty = 1.0
         constraints.fill = GridBagConstraints.VERTICAL

@@ -12,8 +12,6 @@ import com.intellij.util.ui.UIUtil
 import java.awt.*
 import java.awt.geom.Rectangle2D
 import java.awt.image.BufferedImage
-import java.lang.reflect.InvocationTargetException
-import java.lang.reflect.Method
 import javax.swing.JComponent
 import kotlin.math.max
 import kotlin.math.min
@@ -118,6 +116,27 @@ internal class AdvancedImageBuilder(private val options: CopyImageOptionsProvide
     }
 
     /**
+     * Represents the components needed for rendering the editor content.
+     */
+    private data class ContentComponents(
+        val gutterComponent: JComponent,
+        val contentComponent: JComponent
+    )
+
+    /**
+     * Extracts the visual components from the editor needed for content rendering.
+     *
+     * @param editor The editor to extract components from
+     * @return ContentComponents object containing the necessary visual components
+     */
+    private fun extractVisualComponents(editor: EditorEx): ContentComponents {
+        return ContentComponents(
+            gutterComponent = editor.gutterComponentEx,
+            contentComponent = editor.contentComponent
+        )
+    }
+
+    /**
      * Renders the main content of the editor including both gutter and code areas.
      * This method handles painting both the gutter component (line numbers, breakpoints, etc.)
      * and the main editor content component (the actual code text) to the screenshot image.
@@ -127,8 +146,9 @@ internal class AdvancedImageBuilder(private val options: CopyImageOptionsProvide
      * @param bounds The rectangle defining the area of content to capture
      */
     private fun content(palette: Graphics, editor: EditorEx, bounds: Rectangle) {
-        val gutterComp: JComponent = editor.gutterComponentEx
-        val contentComp = editor.contentComponent
+        val components = extractVisualComponents(editor)
+        val gutterComp = components.gutterComponent
+        val contentComp = components.contentComponent
 
         // Create graphics context for the gutter area
         val gutterPalette = palette.create(
@@ -342,6 +362,38 @@ internal class AdvancedImageBuilder(private val options: CopyImageOptionsProvide
 
     companion object {
         /**
+         * Represents the visual properties of the editor gutter needed for drawing.
+         */
+        private data class GutterVisualProperties(
+            val backgroundColor: Color,
+            val separatorX: Int,
+            val foldingAreaWidth: Int,
+            val foldingOutlineShown: Boolean,
+            val outlineColor: Color?,
+            val contentBackgroundColor: Color
+        )
+
+        /**
+         * Extracts the visual properties from the editor needed for drawing the gutter background.
+         *
+         * @param editor The editor to extract properties from
+         * @return GutterVisualProperties object containing all necessary visual properties
+         */
+        private fun extractGutterVisualProperties(editor: EditorEx): GutterVisualProperties {
+            val comp = editor.gutterComponentEx
+            val settings = editor.settings
+
+            return GutterVisualProperties(
+                backgroundColor = comp.background,
+                separatorX = comp.whitespaceSeparatorOffset,
+                foldingAreaWidth = getFoldingAreaWidth(editor),
+                foldingOutlineShown = settings.isFoldingOutlineShown,
+                outlineColor = editor.colorsScheme.defaultBackground,
+                contentBackgroundColor = editor.backgroundColor
+            )
+        }
+
+        /**
          * Draws the background for the gutter area of the editor including the folding outline.
          * This method handles rendering the background colors and the folding separator line
          * to match the original editor's appearance in the screenshot.
@@ -353,56 +405,48 @@ internal class AdvancedImageBuilder(private val options: CopyImageOptionsProvide
          * @param divider The x-coordinate position where the gutter separator is located
          */
         private fun drawGutterBackground(g: Graphics, editor: EditorEx, height: Int, padding: Int, divider: Int) {
-            val comp = editor.gutterComponentEx
+            val visualProps = extractGutterVisualProperties(editor)
 
             // use anonymous code block to restrict variable scope,
-            // save some private methods which only be used once.
+            // save some methods which only be used once.
 
             // gutter background
             run {
-                val gtBg = comp.getBackground()
-                g.color = gtBg
+                g.color = visualProps.backgroundColor
                 g.fillRect(0, 0, padding + divider, height)
             }
             // editor background
             run {
-                val edBg = editor.backgroundColor
-                g.color = edBg
-                val gutterSeparatorX = comp.whitespaceSeparatorOffset
-                val foldingAreaWidth: Int = invokeMethod<Int?>(
-                    AdvancedImageBuilder.findMethod(
-                        comp,
-                        "getFoldingAreaWidth"
-                    ), comp
-                )!!
-                g.fillRect(padding + gutterSeparatorX, 0, foldingAreaWidth, height)
+                g.color = visualProps.contentBackgroundColor
+                g.fillRect(padding + visualProps.separatorX, 0, visualProps.foldingAreaWidth, height)
             }
-            // folding line
+            // folding line - only draw if folding outline is enabled in editor settings
             run {
-                val shown: Boolean = invokeMethod(
-                    AdvancedImageBuilder.findMethod(
-                        comp,
-                        "isFoldingOutlineShown"
-                    ), comp
-                )!!
-                if (!shown) return
-                val olBg: Color? = invokeMethod(
-                    findMethod(
-                        comp,
-                        "getOutlineColor",
-                        Boolean::class.javaPrimitiveType
-                    ), comp, false
-                )
-                g.color = olBg
-                val x = (comp.whitespaceSeparatorOffset + padding).toDouble()
-                val w: Double = invokeMethod(
-                    AdvancedImageBuilder.findMethod(
-                        comp,
-                        "getStrokeWidth"
-                    ), comp
-                )!!
+                if (!visualProps.foldingOutlineShown) return
+                g.color = visualProps.outlineColor
+                val x = (visualProps.separatorX + padding).toDouble()
+                val w = 1.0 // standard stroke width
                 LinePainter2D.paint(g as Graphics2D, x, 0.0, x, height.toDouble(), LinePainter2D.StrokeType.CENTERED, w)
             }
+        }
+
+        /**
+         * Represents the visual properties of the editor content needed for drawing.
+         */
+        private data class ContentVisualProperties(
+            val backgroundColor: Color
+        )
+
+        /**
+         * Extracts the visual properties from the editor needed for drawing the content background.
+         *
+         * @param editor The editor to extract properties from
+         * @return ContentVisualProperties object containing all necessary visual properties
+         */
+        private fun extractContentVisualProperties(editor: EditorEx): ContentVisualProperties {
+            return ContentVisualProperties(
+                backgroundColor = editor.backgroundColor
+            )
         }
 
         /**
@@ -420,7 +464,8 @@ internal class AdvancedImageBuilder(private val options: CopyImageOptionsProvide
             g: Graphics, editor: EditorEx, height: Int, padding: Int, divider: Int,
             imageWidth: Int
         ) {
-            g.color = editor.backgroundColor
+            val visualProps = extractContentVisualProperties(editor)
+            g.color = visualProps.backgroundColor
             g.fillRect(
                 padding + divider, 0,
                 (imageWidth - divider) + padding, height
@@ -428,40 +473,22 @@ internal class AdvancedImageBuilder(private val options: CopyImageOptionsProvide
         }
 
         /**
-         * Helper method to find a private method in a class using reflection.
-         * This is used to access internal IntelliJ editor methods that are not part of the public API.
-         *
-         * @param obj The object whose class contains the method
-         * @param methodName The name of the method to find
-         * @param paramTypes The parameter types of the method
-         * @return The Method object representing the found method
+         * Represents the visual properties of the folding area needed for drawing.
          */
-        private fun findMethod(obj: Any, methodName: String, vararg paramTypes: Class<*>?): Method {
-            try {
-                return obj.javaClass.getDeclaredMethod(methodName, *paramTypes)
-            } catch (e: NoSuchMethodException) {
-                throw RuntimeException(e)
-            }
-        }
+        private data class FoldingAreaProperties(
+            val width: Int
+        )
 
         /**
-         * Helper method to invoke a private method using reflection.
-         * This allows access to internal IntelliJ editor functionality that is not exposed through public APIs.
-         *
-         * @param method The method to invoke
-         * @param instance The object instance on which to invoke the method
-         * @param params The parameters to pass to the method
-         * @return The return value of the method invocation
+         * Gets the folding area width from the editor settings.
+         * This is calculated based on available editor properties instead of using reflection.
          */
-        private fun <T> invokeMethod(method: Method, instance: Any?, vararg params: Any?): T? {
-            try {
-                method.isAccessible = true
-                return method.invoke(instance, *params) as T?
-            } catch (e: IllegalAccessException) {
-                throw RuntimeException(e)
-            } catch (e: InvocationTargetException) {
-                throw RuntimeException(e)
-            }
+        private fun getFoldingAreaWidth(editor: EditorEx): Int {
+            // Get folding area width based on editor settings and properties
+            // Since we can't directly access the private folding area width,
+            // we estimate it based on typical values or editor properties
+            val settings = editor.settings
+            return if (settings.isFoldingOutlineShown) 10 else 0  // Typical folding margin width
         }
     }
 }
