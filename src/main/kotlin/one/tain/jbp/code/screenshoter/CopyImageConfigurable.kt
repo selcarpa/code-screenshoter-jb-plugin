@@ -18,47 +18,102 @@ import java.awt.GridBagLayout
 import javax.swing.*
 import javax.swing.event.ChangeEvent
 
+/**
+ * Configurable class that provides the UI for configuring code screenshoter plugin options.
+ * This class implements IntelliJ's SearchableConfigurable interface to integrate the
+ * plugin settings into the IDE's settings dialog.
+ *
+ * @property project The current project for which to manage options
+ */
 class CopyImageConfigurable(private val project: Project) : SearchableConfigurable, NoScroll {
     private var panel: CopyImageOptionsPanel = CopyImageOptionsPanel(project).also {
         it.init()
     }
 
+    /**
+     * Gets the display name for this configurable component.
+     * This name is shown in the settings dialog navigation panel.
+     *
+     * @return The localized display name for the configurable
+     */
     override fun getDisplayName(): @Nls String {
         return CodeScreenshoterBundle.message("configurable.display.name")
     }
 
+    /**
+     * Gets the unique ID for this configurable component.
+     * This ID is used for navigation and identification in the settings system.
+     *
+     * @return The unique identifier for this configurable
+     */
     override fun getId(): String {
         return "one/tain/jbp/code/screenshoter"
     }
 
+    /**
+     * Gets the help topic for this configurable component.
+     * This is used to link to context-sensitive help (returns null if no help is available).
+     *
+     * @return The help topic identifier, or null if no help is provided
+     */
     override fun getHelpTopic(): String? {
         return null
     }
 
+    /**
+     * Creates and returns the UI component representing the configuration panel.
+     * This method provides the main UI for the plugin settings.
+     *
+     * @return The JComponent that contains the configuration UI
+     */
     override fun createComponent(): JComponent {
         return panel.wholePanel
     }
 
+    /**
+     * Checks if the current values in the UI differ from the stored settings.
+     * This method is used to enable/disable the Apply button in the settings dialog.
+     *
+     * @return True if the settings have been modified, false otherwise
+     */
     override fun isModified(): Boolean {
         val provider = CopyImageOptionsProvider.getInstance(project)
         return provider.state != panel.toState()
     }
 
+    /**
+     * Applies the current UI values to the persistent settings.
+     * This method is called when the user clicks the Apply or OK button in the settings dialog.
+     */
     override fun apply() {
         val provider = CopyImageOptionsProvider.getInstance(project)
         provider.loadState(panel.toState())
     }
 
+    /**
+     * Resets the UI values to match the stored settings.
+     * This method is called when the user clicks the Reset button in the settings dialog.
+     */
     override fun reset() {
         val provider = CopyImageOptionsProvider.getInstance(project)
         panel.fromState(provider.state)
     }
 
+    /**
+     * Disposes of any UI resources when the configuration dialog is closed.
+     * This method handles cleanup of UI resources if needed (currently no cleanup required).
+     */
     override fun disposeUIResources() {
     }
 }
 
 
+/**
+ * UI panel class that contains all the configuration options for the code screenshoter plugin.
+ * This class creates and manages the Swing UI components for the settings dialog.
+ *
+ * @property project The current project context for the configuration panel
+ */
 class CopyImageOptionsPanel(private val project: Project) {
     lateinit var wholePanel: JPanel
     private lateinit var scaleTextField: JTextField
@@ -80,6 +135,10 @@ class CopyImageOptionsPanel(private val project: Project) {
         createUI()
     }
 
+    /**
+     * Creates and arranges all UI components for the settings panel using GridBagLayout.
+     * This method builds the entire configuration UI with all input fields and controls.
+     */
     private fun createUI() {
         wholePanel = JPanel(GridBagLayout())
         wholePanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
@@ -224,6 +283,13 @@ class CopyImageOptionsPanel(private val project: Project) {
         wholePanel.add(vSpacer, constraints)
     }
 
+    /**
+     * Converts the current UI component values to a State object.
+     * This method extracts values from all UI controls and creates a State object
+     * that represents the current configuration.
+     *
+     * @return A CopyImageOptionsProvider.State object with values from the UI components
+     */
     fun toState(): CopyImageOptionsProvider.State {
         return CopyImageOptionsProvider.State(
             scale = scaleTextField.text.trim().toDoubleOrNull() ?: 4.0,
@@ -239,6 +305,12 @@ class CopyImageOptionsPanel(private val project: Project) {
         )
     }
 
+    /**
+     * Sets the UI component values from a State object.
+     * This method populates all UI controls with values from the provided State object.
+     *
+     * @param state The CopyImageOptionsProvider.State object containing values to set in the UI
+     */
     fun fromState(state: CopyImageOptionsProvider.State) {
         chopIndentation.isSelected = state.chopIndentation
         removeCaret.isSelected = state.removeCaret
@@ -250,6 +322,10 @@ class CopyImageOptionsPanel(private val project: Project) {
         dateTimePatternTextField.text = state.dateTimePattern
     }
 
+    /**
+     * Initializes the format selection combobox with available format options.
+     * This method should be called after UI creation to populate the format selection dropdown.
+     */
     fun init() {
         Format.entries.forEach { item ->
             formatComboBox.addItem(item)

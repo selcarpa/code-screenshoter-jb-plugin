@@ -9,14 +9,33 @@ import java.io.InputStreamReader
 import java.nio.file.Files
 import java.nio.file.Paths
 
+/**
+ * Utility object containing helper functions for the code screenshoter plugin.
+ * This includes methods for determining default save directories and system-specific operations.
+ */
 object ScreenShoterUtils {
 
+    /**
+     * Gets the default directory for saving screenshots.
+     * This method attempts to find the user's Pictures directory and creates a subdirectory
+     * for the plugin. If the Pictures directory cannot be found, it falls back to the
+     * user's home directory.
+     *
+     * @return A string representing the default directory path for saving screenshots
+     */
     fun pictureDefaultDirectory(): String {
         return picturesDirectory()?.let {
             "$it${File.separator}${CodeScreenshoterBundle.message("plugin.en.name")}${File.separator}"
         } ?: "${SystemProperties.getUserHome()}${File.separator}${CodeScreenshoterBundle.message("plugin.en.name")}${File.separator}"
     }
 
+    /**
+     * Determines the system-specific Pictures directory path.
+     * This method handles different operating systems (Windows, macOS, Linux/BSD) to
+     * find the appropriate user Pictures directory according to system conventions.
+     *
+     * @return A string representing the Pictures directory path, or null if it cannot be determined
+     */
     fun picturesDirectory(): String? {
         val userHome = System.getProperty("user.home")
 
