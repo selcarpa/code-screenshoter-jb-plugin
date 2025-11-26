@@ -6,9 +6,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 
 class SaveImageAction : BaseImageAction() {
     override fun actionPerformed(event: AnActionEvent) {
-        val result = validateAndCreateImage(event) ?: return
+        val (project, image, _) =  validateAndCreateImage(event) ?: return
 
-        val (project, image, _) = result
         saveImage(image, project)
     }
 

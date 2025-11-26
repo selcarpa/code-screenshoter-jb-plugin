@@ -13,9 +13,7 @@ import java.awt.Toolkit
 class CopyImageAction : BaseImageAction() {
     override fun actionPerformed(event: AnActionEvent) {
         val startTime = System.currentTimeMillis()
-        val result = validateAndCreateImage(event) ?: return
-
-        val (project, image, _) = result
+        val (project, image, _)  = validateAndCreateImage(event) ?: return
 
         val clipboard = Toolkit.getDefaultToolkit().systemClipboard
         clipboard.setContents(image) { _, _ -> }
