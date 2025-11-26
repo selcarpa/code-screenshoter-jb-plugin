@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 @Service(Service.Level.PROJECT)
 @State(name = "CopyImageOptionsProvider", storages = [Storage(StoragePathMacros.WORKSPACE_FILE)])
 class CopyImageOptionsProvider : PersistentStateComponent<CopyImageOptionsProvider.State> {
+
     companion object {
         /**
          * Gets the singleton instance of the CopyImageOptionsProvider for a given project.
@@ -84,5 +85,7 @@ class CopyImageOptionsProvider : PersistentStateComponent<CopyImageOptionsProvid
         val indentGuidesShown : Boolean = false,
         /** Whether line numbers are shown, default is false */
         val lineNumbersShown : Boolean = false,
+        /** Whether the first-run notification has been shown, default is false */
+        val firstRunNotificationShown: Boolean = false,
         )
 }

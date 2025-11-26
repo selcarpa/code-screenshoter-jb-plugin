@@ -40,6 +40,10 @@ abstract class BaseImageAction : AnAction() {
      */
     protected fun validateAndCreateImage(event: AnActionEvent): Triple<Project, TransferableImage<*>, Rectangle2D>? {
         val project = event.project ?: return null
+
+        // Check if this is the first run and show notification if needed
+        showFirstRunNotificationIfNeeded(project)
+
         val editor = getEditor(event) ?: run {
             showError(project, getUnavailableMessage())
             return null
@@ -77,6 +81,40 @@ abstract class BaseImageAction : AnAction() {
     }
 
     /**
+     * Shows the first-run notification if it hasn't been shown before.
+     * This notification asks users to star the plugin on GitHub.
+     *
+     * @param project The project context to show the notification in
+     */
+    private fun showFirstRunNotificationIfNeeded(project: Project) {
+        val options = getInstance(project).state
+        if (!options.firstRunNotificationShown) {
+            // Update the state to mark notification as shown
+            val updatedState = options.copy(firstRunNotificationShown = true)
+            val optionsProvider = getInstance(project)
+            optionsProvider.loadState(updatedState)
+
+            // Show the first-run notification
+            val notification = notificationGroup
+                .createNotification(
+                    CodeScreenshoterBundle.message("first.run.notification.title"),
+                    CodeScreenshoterBundle.message("first.run.notification.content"),
+                    NotificationType.INFORMATION
+                )
+                .setTitle(CodeScreenshoterBundle.message("first.run.notification.title"))
+
+            notification.addAction(object :
+                NotificationAction("GitHub: ${CodeScreenshoterBundle.message("plugin.repository.name")}") {
+                override fun actionPerformed(e: AnActionEvent, notification: Notification) {
+                    com.intellij.ide.BrowserUtil.browse(CodeScreenshoterBundle.message("plugin.repository.url"))
+                }
+            })
+
+            notification.notify(project)
+        }
+    }
+
+    /**
      * Saves the given image to the user-specified directory with a timestamped filename.
      * This method handles file creation, image writing, and displays notifications about the save operation.
      * It also provides an option to open the saved file in the system's default application.
@@ -103,8 +141,7 @@ abstract class BaseImageAction : AnAction() {
             }
             val pathRepresentation =
                 StringUtil.escapeXmlEntities(StringUtil.shortenPathWithEllipsis(path.toString(), 50))
-            val notification = notificationGroup
-                .createNotification(pathRepresentation, NotificationType.INFORMATION)
+            val notification = notificationGroup.createNotification(pathRepresentation, NotificationType.INFORMATION)
                 .setTitle(CodeScreenshoterBundle.message("notification.title"))
                 .setSubtitle(CodeScreenshoterBundle.message("notification.image.saved"))
             if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
@@ -116,8 +153,9 @@ abstract class BaseImageAction : AnAction() {
                             showError(
                                 project, CodeScreenshoterBundle.message(
                                     "error.open.image",
-                                    StringUtil.escapeXmlEntities(path.toString()) + ":<br>" +
-                                            StringUtil.escapeXmlEntities(StringUtil.notNullize(e.localizedMessage))
+                                    StringUtil.escapeXmlEntities(path.toString()) + ":<br>" + StringUtil.escapeXmlEntities(
+                                        StringUtil.notNullize(e.localizedMessage)
+                                    )
                                 )
                             )
                         }
@@ -129,17 +167,19 @@ abstract class BaseImageAction : AnAction() {
             showError(
                 project, CodeScreenshoterBundle.message(
                     "error.save.image",
-                    StringUtil.escapeXmlEntities(path.toString()) + ":<br>" +
-                            CodeScreenshoterBundle.message("error.not.directory", path.toString()) + " " +
-                            StringUtil.escapeXmlEntities(e.file)
+                    StringUtil.escapeXmlEntities(path.toString()) + ":<br>" + CodeScreenshoterBundle.message(
+                        "error.not.directory",
+                        path.toString()
+                    ) + " " + StringUtil.escapeXmlEntities(e.file)
                 )
             )
         } catch (e: IOException) {
             showError(
                 project, CodeScreenshoterBundle.message(
                     "error.save.image",
-                    StringUtil.escapeXmlEntities(path.toString()) + ":<br>" +
-                            StringUtil.escapeXmlEntities(StringUtil.notNullize(e.localizedMessage))
+                    StringUtil.escapeXmlEntities(path.toString()) + ":<br>" + StringUtil.escapeXmlEntities(
+                        StringUtil.notNullize(e.localizedMessage)
+                    )
                 )
             )
         }
