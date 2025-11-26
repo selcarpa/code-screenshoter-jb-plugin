@@ -6,7 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.util.Consumer
-import one.tain.jbp.code.screenshoter.CopyImageUtils.notificationGroup
+import one.tain.jbp.code.screenshoter.ScreenShoterUtils.notificationGroup
 import java.awt.Toolkit
 
 

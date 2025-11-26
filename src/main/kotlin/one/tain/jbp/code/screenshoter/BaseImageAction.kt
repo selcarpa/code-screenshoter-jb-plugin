@@ -11,9 +11,9 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import one.tain.jbp.code.screenshoter.CopyImageOptionsProvider.Companion.getInstance
-import one.tain.jbp.code.screenshoter.CopyImageUtils.getEditor
-import one.tain.jbp.code.screenshoter.CopyImageUtils.notificationGroup
-import one.tain.jbp.code.screenshoter.CopyImageUtils.showError
+import one.tain.jbp.code.screenshoter.ScreenShoterUtils.getEditor
+import one.tain.jbp.code.screenshoter.ScreenShoterUtils.notificationGroup
+import one.tain.jbp.code.screenshoter.ScreenShoterUtils.showError
 import java.awt.Desktop
 import java.awt.geom.Rectangle2D
 import java.io.IOException
