@@ -19,7 +19,7 @@ class SaveImageAction : BaseImageAction() {
      * @param event The action event that triggered this operation
      */
     override fun actionPerformed(event: AnActionEvent) {
-        val (project, image, _) =  validateAndCreateImage(event) ?: return
+        val (project, image, _) = validateAndCreateImage(event) ?: return
 
         saveImage(image, project)
     }
@@ -30,7 +30,8 @@ class SaveImageAction : BaseImageAction() {
      *
      * @return String containing the unavailable message
      */
-    override fun getUnavailableMessage(): String = CodeScreenshoterBundle.message("action.save.as.image.name") + " " + CodeScreenshoterBundle.message("error.only.editor.support")
+    override fun getUnavailableMessage(): String =
+        CodeScreenshoterBundle.message("action.save.as.image.name") + " " + CodeScreenshoterBundle.message("error.only.editor.support")
 
     /**
      * Returns the message to show when no text is selected in the editor.
@@ -46,7 +47,7 @@ class SaveImageAction : BaseImageAction() {
      *
      * @return String containing the large image save warning message
      */
-    override fun getWarningMessage(): String = CodeScreenshoterBundle.message("message.large.image.save.warning")
+    override fun getWarningMessage(currentSettle: String): String = CodeScreenshoterBundle.message("message.large.image.save.warning", currentSettle)
 
     /**
      * Returns the text to display on the "Yes" button in confirmation dialogs.

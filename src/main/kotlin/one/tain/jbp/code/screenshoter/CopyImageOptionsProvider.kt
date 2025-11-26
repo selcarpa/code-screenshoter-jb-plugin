@@ -55,7 +55,6 @@ class CopyImageOptionsProvider : PersistentStateComponent<CopyImageOptionsProvid
      * @property directoryToSave The directory path where images should be saved (default is system Pictures directory)
      * @property padding The amount of padding to add around the image content (default is 0)
      * @property format The output format for images (PNG or SVG, default is PNG)
-     * @property sizeLimitToWarn The maximum image size in bytes before showing a warning dialog (default is 3MB)
      * @property dateTimePattern The date/time pattern used for generating unique filenames (default is yyyyMMdd_HHmmss)
      */
     data class State(
@@ -71,9 +70,19 @@ class CopyImageOptionsProvider : PersistentStateComponent<CopyImageOptionsProvid
         val padding: Int = 0,
         /** Image format, default is PNG */
         val format: Format = Format.PNG,
-        /** Size limit in bytes for warning dialog, default is 3MB */
-        val sizeLimitToWarn: Long = 3000000L,
+        /** line limit in bytes for warning dialog, default is 50 */
+        val lineLimitToWarn: Long = 50L,
         /** Date time pattern for file naming, default is yyyyMMdd_HHmmss */
-        val dateTimePattern: String = "yyyyMMdd_HHmmss"
-    )
+        val dateTimePattern: String = "yyyyMMdd_HHmmss",
+        /** Whether gutter icons are shown, default is false */
+        val gutterIconsShown: Boolean = false,
+        /** Whether folding outline is shown, default is false */
+        val foldingOutlineShown: Boolean = false,
+        /** Whether inner whitespace is shown, default is false */
+        val innerWhitespaceShown : Boolean = false,
+        /** Whether indent guides are shown, default is false */
+        val indentGuidesShown : Boolean = false,
+        /** Whether line numbers are shown, default is false */
+        val lineNumbersShown : Boolean = false,
+        )
 }

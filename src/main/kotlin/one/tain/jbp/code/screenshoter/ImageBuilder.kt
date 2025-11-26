@@ -127,13 +127,10 @@ internal class ImageBuilder(private val editor: Editor) {
      *
      * @return A pair containing the total pixel count (width * height * scale^2) and the selection rectangle
      */
-    fun selectedSize(): Pair<Long, Rectangle2D> {
-        val options = getInstance(project).state
+    fun selectedSize():Rectangle2D {
         val rectangle = this.selectionRectangle
-        val sizeX = rectangle.width + options.padding * 2  // Add padding to both sides
-        val sizeY = rectangle.height + options.padding * 2 // Add padding to top and bottom
         // Calculate the total pixel count after applying scale
-        return (sizeX * sizeY * options.scale * options.scale).toLong() to rectangle
+        return rectangle
     }
 
     /**

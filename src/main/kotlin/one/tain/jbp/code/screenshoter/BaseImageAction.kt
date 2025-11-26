@@ -50,12 +50,15 @@ abstract class BaseImageAction : AnAction() {
             return null
         }
 
-        val imageBuilder = ImageBuilder(editor)
-        val (size, rectangle) = imageBuilder.selectedSize()
-        if (size > getInstance(project).state.sizeLimitToWarn) {
+        val lineCount = editor.document.lineCount
+
+        //todo: not only line count is limit for image creation, row width is also limit. there should be a line count check with row width check
+
+        // constructing a huge image, promote user to confirm
+        if (lineCount > getInstance(project).state.lineLimitToWarn) {
             if (Messages.showYesNoDialog(
                     project,
-                    getWarningMessage(),
+                    getWarningMessage(getInstance(project).state.lineLimitToWarn.toString()),
                     CodeScreenshoterBundle.message("plugin.name"),
                     getYesButtonText(),
                     CodeScreenshoterBundle.message("message.cancel"),
@@ -65,6 +68,8 @@ abstract class BaseImageAction : AnAction() {
                 return null
             }
         }
+        val imageBuilder = ImageBuilder(editor)
+        val rectangle = imageBuilder.selectedSize()
 
         val image = imageBuilder.createImage(rectangle) ?: return null
 
@@ -180,9 +185,10 @@ abstract class BaseImageAction : AnAction() {
      * Returns the warning message shown when attempting to create a large image.
      * This method must be implemented by subclasses to provide context-specific messages.
      *
+     * @param currentSettle The current settle value
      * @return String containing the large image warning message
      */
-    protected abstract fun getWarningMessage(): String
+    protected abstract fun getWarningMessage(currentSettle: String): String
 
     /**
      * Returns the text to display on the "Yes" button in confirmation dialogs.

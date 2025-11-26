@@ -68,7 +68,7 @@ class CopyImageAction : BaseImageAction() {
      *
      * @return String containing the large image warning message
      */
-    override fun getWarningMessage(): String = CodeScreenshoterBundle.message("message.large.image.warning")
+    override fun getWarningMessage(currentSettle: String): String = CodeScreenshoterBundle.message("message.large.image.warning",currentSettle)
 
     /**
      * Returns the text to display on the "Yes" button in confirmation dialogs.

@@ -124,7 +124,13 @@ class CopyImageOptionsPanel(private val project: Project) {
     private lateinit var saveDirectory: TextFieldWithHistoryWithBrowseButton
     private lateinit var formatComboBox: JComboBox<Format>
     private lateinit var sizeLimitToWarnTextField: JTextField
+    private lateinit var lineLimitToWarnTextField: JTextField
     private lateinit var dateTimePatternTextField: JTextField
+    private lateinit var gutterIconsShown: JCheckBox
+    private lateinit var foldingOutlineShown: JCheckBox
+    private lateinit var innerWhitespaceShown: JCheckBox
+    private lateinit var indentGuidesShown: JCheckBox
+    private lateinit var lineNumbersShown: JCheckBox
 
     companion object {
         private const val SLIDER_SCALE = 2.0
@@ -243,25 +249,10 @@ class CopyImageOptionsPanel(private val project: Project) {
         constraints.fill = GridBagConstraints.HORIZONTAL
         wholePanel.add(formatComboBox, constraints)
 
-        // Size limit to warn section
-        val sizeLimitToWarnLabel = JLabel(CodeScreenshoterBundle.message("options.size.limit.warn.label"))
-        constraints.gridx = 0
-        constraints.gridy = 7
-        constraints.weightx = 0.0
-        constraints.fill = GridBagConstraints.NONE
-        constraints.anchor = GridBagConstraints.LINE_START
-        wholePanel.add(sizeLimitToWarnLabel, constraints)
-
-        sizeLimitToWarnTextField = JTextField()
-        constraints.gridx = 1
-        constraints.anchor = GridBagConstraints.LINE_START
-        constraints.fill = GridBagConstraints.HORIZONTAL
-        wholePanel.add(sizeLimitToWarnTextField, constraints)
-
         // Date time pattern section
         val dateTimePatternLabel = JLabel(CodeScreenshoterBundle.message("options.datetime.pattern.label"))
         constraints.gridx = 0
-        constraints.gridy = 8
+        constraints.gridy = 7
         constraints.weightx = 0.0
         constraints.fill = GridBagConstraints.NONE
         constraints.anchor = GridBagConstraints.LINE_START
@@ -273,10 +264,58 @@ class CopyImageOptionsPanel(private val project: Project) {
         constraints.fill = GridBagConstraints.HORIZONTAL
         wholePanel.add(dateTimePatternTextField, constraints)
 
+        // Line limit to warn section
+        val lineLimitToWarnLabel = JLabel(CodeScreenshoterBundle.message("options.line.limit.warn.label"))
+        constraints.gridx = 0
+        constraints.gridy = 8
+        constraints.weightx = 0.0
+        constraints.fill = GridBagConstraints.NONE
+        constraints.anchor = GridBagConstraints.LINE_START
+        wholePanel.add(lineLimitToWarnLabel, constraints)
+
+        lineLimitToWarnTextField = JTextField()
+        constraints.gridx = 1
+        constraints.anchor = GridBagConstraints.LINE_START
+        constraints.fill = GridBagConstraints.HORIZONTAL
+        wholePanel.add(lineLimitToWarnTextField, constraints)
+
+        // Gutter icons shown checkbox
+        constraints.gridx = 0
+        constraints.gridy = 9
+        constraints.gridwidth = 1
+        constraints.fill = GridBagConstraints.NONE
+        gutterIconsShown = JCheckBox(CodeScreenshoterBundle.message("options.gutter.icons.shown.label"))
+        gutterIconsShown.border = BorderFactory.createEmptyBorder(5, 0, 5, 0)
+        wholePanel.add(gutterIconsShown, constraints)
+
+        // Folding outline shown checkbox
+        constraints.gridy = 10
+        foldingOutlineShown = JCheckBox(CodeScreenshoterBundle.message("options.folding.outline.shown.label"))
+        foldingOutlineShown.border = BorderFactory.createEmptyBorder(5, 0, 5, 0)
+        wholePanel.add(foldingOutlineShown, constraints)
+
+        // Inner whitespace shown checkbox
+        constraints.gridy = 11
+        innerWhitespaceShown = JCheckBox(CodeScreenshoterBundle.message("options.inner.whitespace.shown.label"))
+        innerWhitespaceShown.border = BorderFactory.createEmptyBorder(5, 0, 5, 0)
+        wholePanel.add(innerWhitespaceShown, constraints)
+
+        // Indent guides shown checkbox
+        constraints.gridy = 12
+        indentGuidesShown = JCheckBox(CodeScreenshoterBundle.message("options.indent.guides.shown.label"))
+        indentGuidesShown.border = BorderFactory.createEmptyBorder(5, 0, 5, 0)
+        wholePanel.add(indentGuidesShown, constraints)
+
+        // Line numbers shown checkbox
+        constraints.gridy = 13
+        lineNumbersShown = JCheckBox(CodeScreenshoterBundle.message("options.line.numbers.shown.label"))
+        lineNumbersShown.border = BorderFactory.createEmptyBorder(5, 0, 5, 0)
+        wholePanel.add(lineNumbersShown, constraints)
+
         // Vertical spacer
         val vSpacer = Box.createVerticalGlue()
         constraints.gridx = 0
-        constraints.gridy = 9
+        constraints.gridy = 14
         constraints.gridwidth = 2
         constraints.weighty = 1.0
         constraints.fill = GridBagConstraints.VERTICAL
@@ -300,8 +339,13 @@ class CopyImageOptionsPanel(private val project: Project) {
             format = formatComboBox.selectedItem?.let {
                 it as Format?
             } ?: Format.PNG,
-            sizeLimitToWarn = sizeLimitToWarnTextField.text.trim().toLongOrNull() ?: 3000000L,
-            dateTimePattern = dateTimePatternTextField.text.trim()
+            lineLimitToWarn = lineLimitToWarnTextField.text.trim().toLongOrNull() ?: 50L,
+            dateTimePattern = dateTimePatternTextField.text.trim(),
+            gutterIconsShown = gutterIconsShown.isSelected,
+            foldingOutlineShown = foldingOutlineShown.isSelected,
+            innerWhitespaceShown = innerWhitespaceShown.isSelected,
+            indentGuidesShown = indentGuidesShown.isSelected,
+            lineNumbersShown = lineNumbersShown.isSelected
         )
     }
 
@@ -318,8 +362,13 @@ class CopyImageOptionsPanel(private val project: Project) {
         saveDirectory.text = StringUtil.notNullize(state.directoryToSave)
         paddingTextField.text = state.padding.toString()
         formatComboBox.selectedIndex = state.format.ordinal
-        sizeLimitToWarnTextField.text = state.sizeLimitToWarn.toString()
+        lineLimitToWarnTextField.text = state.lineLimitToWarn.toString()
         dateTimePatternTextField.text = state.dateTimePattern
+        gutterIconsShown.isSelected = state.gutterIconsShown
+        foldingOutlineShown.isSelected = state.foldingOutlineShown
+        innerWhitespaceShown.isSelected = state.innerWhitespaceShown
+        indentGuidesShown.isSelected = state.indentGuidesShown
+        lineNumbersShown.isSelected = state.lineNumbersShown
     }
 
     /**
