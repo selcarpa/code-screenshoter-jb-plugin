@@ -11,7 +11,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import one.tain.jbp.code.screenshoter.CopyImageOptionsProvider.Companion.getInstance
-import one.tain.jbp.code.screenshoter.ScreenShoterUtils.getEditor
+import one.tain.jbp.code.screenshoter.EditorUtils.getEditor
 import one.tain.jbp.code.screenshoter.ScreenShoterUtils.notificationGroup
 import one.tain.jbp.code.screenshoter.ScreenShoterUtils.showError
 import java.awt.Desktop
@@ -73,7 +73,12 @@ abstract class BaseImageAction : AnAction() {
             }
         }
         val imageBuilder = ImageBuilder(editor)
-        val rectangle = imageBuilder.selectedSize()
+        val rectangle = EditorUtils.getSelectionRectangle(
+            editor,
+            EditorUtils.getRange(editor),
+            editor.document.getText(EditorUtils.getRange(editor)),
+            getInstance(project).state
+        )
 
         val image = imageBuilder.createImage(rectangle) ?: return null
 

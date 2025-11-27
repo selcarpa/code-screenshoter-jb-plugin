@@ -4,6 +4,16 @@ All notable changes to the Code Screenshots plugin will be documented in this fi
 
 ## [Unreleased]
 
+### Added
+- First-run notification functionality
+
+### Changed
+- Upgraded Gradle to version 9.0.0 and optimized scripts
+- Refactors the configuration panel's UI components and layout logic
+- Refactors the screenshot functionality
+- Implemented an advanced image builder and optimized screenshot functionality
+- Adds complete documentation comments
+
 ## [2.0.4] - 2025-11-21
 
 ### Added

@@ -25,19 +25,6 @@ object ScreenShoterUtils {
     var notificationTitle: String = CodeScreenshoterBundle.message("plugin.en.name")
 
     /**
-     * Retrieves the editor instance from the given action event context.
-     * This method extracts the editor from the action's data context, which is typically
-     * available when the action is triggered from within an editor component.
-     *
-     * @param event The action event containing the editor context
-     * @return The Editor instance if available, or null if no editor is associated with the event
-     */
-    fun getEditor(event: AnActionEvent): Editor? {
-        val dataContext = event.dataContext
-        return CommonDataKeys.EDITOR.getData(dataContext)
-    }
-
-    /**
      * Gets the notification group for the plugin to display user notifications.
      * This group is used to create and manage all notifications shown by the plugin.
      *
