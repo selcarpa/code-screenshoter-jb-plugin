@@ -83,7 +83,11 @@ internal class ImageBuilder(private val editor: Editor) {
         val rectangle = this.selectionRectangle
         val sizeX = rectangle.width + options.padding * 2
         val sizeY = rectangle.height + options.padding * 2
-        return (sizeX * sizeY * options.scale * options.scale).toLong() to rectangle
+
+        val area = (sizeX * sizeY * options.scale * options.scale).toLong()
+        Logger.getInstance(ImageBuilder::class.java).info("Calculated size: $area bytes, Rectangle: $rectangle")
+
+        return area to rectangle
     }
 
     private val selectionRectangle: Rectangle2D
